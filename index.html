@@ -298,21 +298,22 @@
         }
 
         async function deleteOrderFromCloud(orderId) {
-            try {
-                const { error } = await supabaseClient.from('orders').delete().eq('id', orderId);
-                if (error) {
-                    showToast('ลบข้อมูลไม่สำเร็จ: ' + error.message, 'error');
-                    return false;
-                }
-                showToast('ล้างข้อมูลออเดอร์เรียบร้อยแล้ว!', 'success');
-                await fetchCloudOrders();
-                renderAdminPages();
-                return true;
-            } catch (err) {
-                console.error('ลบข้อมูลล้มเหลว', err);
-                return false;
-            }
+    try {
+        const order = appState.orders.find(o => o.id === orderId);
+        if (order) {
+            order.status = 'cancelled';
+            await saveOrderToCloud(order);
+            showToast('ล้างข้อมูลออเดอร์เรียบร้อยแล้ว!', 'success');
+            await fetchCloudOrders();
+            renderAdminPages();
+            return true;
         }
+    } catch (err) {
+        console.error('ล้างข้อมูลล้มเหลว', err);
+        showToast('ล้างข้อมูลไม่สำเร็จ: ' + err.message, 'error');
+        return false;
+    }
+}
 
         function showToast(message, type) {
             if (!type) type = 'success';
