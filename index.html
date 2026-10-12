@@ -154,8 +154,14 @@
             <div id="admin-page-2" class="admin-page space-y-6 hidden"><div class="border-b border-brand-gold/30 pb-4 mb-6"><h2 class="text-2xl font-bold text-white"><i class="fa-solid fa-upload text-brand-gold mr-2"></i>อัปโหลดแบบที่เสร็จแล้ว</h2></div><div class="bg-brand-charcoal/80 border border-brand-gold/30 rounded-2xl p-6 shadow-xl"><form onsubmit="adminUploadFinishedDesign(event)" class="space-y-6 max-w-2xl mx-auto"><div><label class="block text-brand-gold font-semibold mb-2">เลือกคำสั่งซื้อ</label><select id="admin-select-order" required class="w-full bg-black/50 border border-brand-gold/40 rounded-xl px-4 py-3 text-white"></select></div><div><label class="block text-brand-gold font-semibold mb-2">รูปภาพแบบ</label><input type="file" id="admin-finished-img" accept="image/*" required class="w-full text-sm text-gray-300 file:bg-brand-gold file:text-black bg-black/40 border border-brand-gold/40 rounded-xl p-2"></div><div><label class="block text-brand-gold font-semibold mb-2">หมายเหตุ</label><textarea id="admin-design-notes" rows="3" class="w-full bg-black/50 border border-brand-gold/40 rounded-xl p-3 text-white"></textarea></div><button type="submit" class="w-full gold-btn-gradient text-black font-bold py-3.5 rounded-xl shadow-lg">ส่งแบบให้ลูกค้า</button></form></div></div>
             <div id="admin-page-3" class="admin-page space-y-6 hidden"><div class="border-b border-brand-gold/30 pb-4 mb-6"><h2 class="text-2xl font-bold text-white"><i class="fa-solid fa-calculator text-brand-gold mr-2"></i>การเงิน & ใบงาน</h2></div><div id="admin-finance-list" class="space-y-6"></div></div>
             <div id="admin-page-4" class="admin-page space-y-6 hidden"><div class="border-b border-brand-gold/30 pb-4 mb-6"><h2 class="text-2xl font-bold text-white"><i class="fa-solid fa-industry text-brand-gold mr-2"></i>ลายผลิต (จัดการสถานะการผลิต)</h2></div><div id="admin-production-list" class="space-y-6"></div></div>
-            <div id="admin-page-5" class="admin-page space-y-6 hidden"><div class="border-b border-brand-gold/30 pb-4 mb-6"><h2 class="text-2xl font-bold text-white"><i class="fa-solid fa-chart-line text-brand-gold mr-2"></i>สรุปยอดขาย</h2></div><div id="admin-reports-content" class="space-y-8"></div></div>
-            <div id="admin-page-6" class="admin-page space-y-6 hidden"><div class="border-b border-brand-gold/30 pb-4 mb-6"><h2 class="text-2xl font-bold text-white"><i class="fa-solid fa-database text-brand-gold mr-2"></i>ฐานข้อมูล (ประวัติคำสั่งซื้อ)</h2></div><div id="admin-database-list" class="space-y-4"></div></div>
+            <div id="admin-page-5" class="admin-page space-y-6 hidden">
+                <div class="border-b border-brand-gold/30 pb-4 mb-6"><h2 class="text-2xl font-bold text-white"><i class="fa-solid fa-chart-line text-brand-gold mr-2"></i>ระบบสรุปยอดขาย (Sales Reports)</h2></div>
+                <div id="admin-reports-content" class="space-y-8"></div>
+            </div>
+            <div id="admin-page-6" class="admin-page space-y-6 hidden">
+                <div class="border-b border-brand-gold/30 pb-4 mb-6"><h2 class="text-2xl font-bold text-white"><i class="fa-solid fa-database text-brand-gold mr-2"></i>ฐานข้อมูลลูกค้าทั้งหมด (Admin Master Database)</h2></div>
+                <div id="admin-database-list" class="space-y-4"></div>
+            </div>
         </div>
     </main>
 
@@ -214,7 +220,6 @@
             { key: 'back', label: 'หลัง' }
         ];
         
-        // ลำดับขั้นตอนการผลิตตามที่ต้องการ: จัดเตรียมเสื้อ -> พิมพ์ DTF -> รีด DTF -> แกะบล็อคปัก -> ลงปัก -> จัดส่ง
         const PRODUCTION_STAGES = [
             { key: 'prepare', label: 'จัดเตรียมเสื้อ' }, 
             { key: 'dtfPrint', label: 'พิมพ์ DTF' }, 
@@ -389,7 +394,7 @@
                 const icon = appState.currentUser.role === 'agency' ? 'fa-id-badge' : 'fa-line';
                 navAuth.innerHTML = '<div class="flex items-center space-x-3"><span class="text-brand-gold text-sm"><i class="fa-solid ' + icon + ' mr-1"></i>' + appState.currentUser.name + '</span><button onclick="switchRole(\'customer\')" class="bg-brand-darkRed text-brand-gold border border-brand-gold/40 px-3 py-1.5 rounded-lg text-xs">หน้าจัดการ</button><button onclick="logout()" class="text-gray-400 hover:text-red-400 p-2"><i class="fa-solid fa-power-off"></i></button></div>';
                 
-                if (dbTab) dbTab.classList.remove('hidden'); // แสดงหน้า 6 ให้ทั้งลูกค้าและเอเจนซี่
+                if (dbTab) dbTab.classList.remove('hidden');
 
                 switchRole('customer');
             } else {
@@ -508,7 +513,6 @@
                 });
             }
 
-            // หน้า 6: ฐานข้อมูลการสั่ง (แสดงข้อมูลทั้งหมดรวมถึงสลิป ไซส์ จำนวนเงิน ที่อยู่ และรูปแบบการชำระ)
             if (dbContainer) {
                 if (myOrders.length === 0) {
                     dbContainer.innerHTML = '<p class="text-center text-gray-400 py-8">ยังไม่มีประวัติการสั่งซื้อ</p>';
@@ -755,7 +759,7 @@
                 if (order) {
                     order.paymentSlip = base64Slip;
                     order.paymentType = paymentTypeChoice;
-                    order.status = 'in_production'; // ย้ายไปหน้าลายผลิตของแอดมินทันที
+                    order.status = 'in_production';
                     await saveOrderToCloud(order);
                     showToast('แจ้งชำระเงินสำเร็จ! ออเดอร์เข้าสู่กระบวนการผลิตแล้ว', 'success');
                     renderCustomerPages();
@@ -833,13 +837,15 @@
             }
             document.getElementById('admin-finance-list').innerHTML = financeHTML;
 
-            // Render หน้าลายผลิต (Admin Tab 4) พร้อมขั้นตอนการผลิตใหม่ตามลำดับ
+            // หน้า 4: ลายผลิต (เพิ่มการแสดงรูปแบบที่ลูกค้าตกลงในหน้าที่ 3 คู่กับสลิปและข้อมูลลูกค้า)
             let productionHTML = '';
             if (productionOrders.length === 0) {
                 document.getElementById('admin-production-list').innerHTML = '<p class="text-center text-gray-400 py-10">ยังไม่มีออเดอร์ในขั้นตอนการผลิต (ลูกค้าต้องชำระเงินและแจ้งสลิปก่อน)</p>';
             } else {
                 productionOrders.forEach(order => {
                     const payTypeName = order.paymentType === 'full' ? 'ชำระเต็มจำนวน' : 'มัดจำ 50%';
+                    const agreedDesignImg = order.adminFinishedDesign && order.adminFinishedDesign.image ? order.adminFinishedDesign.image : null;
+
                     productionHTML += `
                     <div class="bg-brand-charcoal border border-brand-gold/30 rounded-2xl p-6 mb-6 space-y-4">
                         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center border-b border-brand-gold/20 pb-3 gap-2">
@@ -851,20 +857,27 @@
                                 <span class="px-3 py-1 bg-emerald-900/50 border border-emerald-500 text-emerald-300 rounded-full text-xs font-semibold">แจ้งชำระเงินแล้ว (${payTypeName})</span>
                             </div>
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <!-- รูปแบบที่ลูกค้าตกลงจากหน้า 3 -->
                             <div class="bg-black/50 p-3 rounded-xl border border-brand-gold/20 text-center">
-                                <p class="text-xs text-brand-gold font-bold mb-2">สลิปโอนเงินจากลูกค้า (${payTypeName})</p>
-                                <img src="${order.paymentSlip}" class="max-h-40 object-contain mx-auto rounded border border-brand-gold">
+                                <p class="text-xs text-brand-gold font-bold mb-2"><i class="fa-solid fa-eye mr-1"></i> รูปแบบที่ตกลง (หน้า 3)</p>
+                                ${agreedDesignImg ? `<img src="${agreedDesignImg}" class="max-h-40 object-contain mx-auto rounded border border-brand-gold">` : '<p class="text-xs text-gray-500">ไม่มีรูปภาพแบบ</p>'}
                             </div>
+                            <!-- สลิปโอนเงิน -->
+                            <div class="bg-black/50 p-3 rounded-xl border border-brand-gold/20 text-center">
+                                <p class="text-xs text-brand-gold font-bold mb-2"><i class="fa-solid fa-receipt mr-1"></i> สลิปโอนเงิน (${payTypeName})</p>
+                                <img src="${order.paymentSlip}" class="max-h-40 object-contain mx-auto rounded border border-emerald-500">
+                            </div>
+                            <!-- ข้อมูลจัดส่ง & ไซส์ -->
                             <div class="bg-black/50 p-3 rounded-xl border border-brand-gold/20 space-y-2 text-xs">
-                                <p class="text-brand-gold font-bold">ข้อมูลจัดส่ง:</p>
-                                <p class="text-gray-300">${order.customerResponse ? order.customerResponse.shippingAddress : '-'}</p>
-                                <p class="text-brand-gold font-bold mt-2">ไซส์/จำนวน:</p>
-                                <p class="text-gray-300">${order.customerResponse ? order.customerResponse.sizesAndQty : '-'}</p>
+                                <p class="text-brand-gold font-bold"><i class="fa-solid fa-address-card mr-1"></i> ข้อมูลลูกค้า & จัดส่ง:</p>
+                                <p class="text-gray-300"><strong>ที่อยู่:</strong> ${order.customerResponse ? order.customerResponse.shippingAddress : '-'}</p>
+                                <p class="text-gray-300 mt-1"><strong>ไซส์/จำนวน:</strong> ${order.customerResponse ? order.customerResponse.sizesAndQty : '-'}</p>
                             </div>
                         </div>
                         
-                        <!-- ช่องติ๊กและอัปโหลดรูปตามขั้นตอนผลิต (จัดเตรียมเสื้อ -> พิมพ์ DTF -> รีด DTF -> แกะบล็อคปัก -> ลงปัก -> จัดส่ง) -->
+                        <!-- ช่องติ๊กและอัปโหลดรูปตามขั้นตอนผลิต -->
                         <div class="pt-3 border-t border-brand-gold/20 space-y-3">
                             <h4 class="text-brand-gold font-bold text-sm"><i class="fa-solid fa-list-check mr-2"></i>อัปเดตสถานะลายผลิต (ติ๊กและแนบรูป)</h4>
                             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">`;
@@ -893,6 +906,124 @@
                     productionHTML += `</div></div></div>`;
                 });
                 document.getElementById('admin-production-list').innerHTML = productionHTML;
+            }
+
+            // หน้า 5: ระบบยอดขาย (Admin Tab 5)
+            const allValidOrders = appState.orders.filter(o => o.status !== 'cancelled' && o.quotation);
+            let totalRevenue = 0;
+            let fullPaymentRevenue = 0;
+            let depositPaymentRevenue = 0;
+            let totalOrdersCount = allValidOrders.length;
+
+            allValidOrders.forEach(o => {
+                const price = o.quotation.totalPrice || 0;
+                totalRevenue += price;
+                if (o.paymentType === 'full') {
+                    fullPaymentRevenue += price;
+                } else {
+                    depositPaymentRevenue += price;
+                }
+            });
+
+            let salesReportHTML = `
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-brand-charcoal border border-brand-gold/30 rounded-2xl p-5 shadow-lg">
+                        <p class="text-xs text-gray-400 mb-1">ยอดขายรวมทั้งหมด</p>
+                        <p class="text-2xl font-bold text-brand-gold">${totalRevenue.toLocaleString()} บาท</p>
+                    </div>
+                    <div class="bg-brand-charcoal border border-brand-gold/30 rounded-2xl p-5 shadow-lg">
+                        <p class="text-xs text-gray-400 mb-1">จำนวนออเดอร์ที่ประเมินราคา</p>
+                        <p class="text-2xl font-bold text-white">${totalOrdersCount} ออเดอร์</p>
+                    </div>
+                    <div class="bg-brand-charcoal border border-brand-gold/30 rounded-2xl p-5 shadow-lg">
+                        <p class="text-xs text-gray-400 mb-1">ยอดชำระเต็มจำนวน</p>
+                        <p class="text-2xl font-bold text-emerald-400">${fullPaymentRevenue.toLocaleString()} บาท</p>
+                    </div>
+                    <div class="bg-brand-charcoal border border-brand-gold/30 rounded-2xl p-5 shadow-lg">
+                        <p class="text-xs text-gray-400 mb-1">ยอดมัดจำ 50%</p>
+                        <p class="text-2xl font-bold text-amber-400">${depositPaymentRevenue.toLocaleString()} บาท</p>
+                    </div>
+                </div>
+
+                <div class="bg-brand-charcoal border border-brand-gold/30 rounded-2xl p-6 shadow-xl space-y-4">
+                    <h3 class="text-lg font-bold text-white border-b border-brand-gold/20 pb-3"><i class="fa-solid fa-table mr-2"></i>ประวัติรายการขายทั้งหมด</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs text-gray-300">
+                            <thead class="bg-black/60 text-brand-gold border-b border-brand-gold/30">
+                                <tr>
+                                    <th class="p-3">ID ออเดอร์</th>
+                                    <th class="p-3">ลูกค้า / ตัวแทน</th>
+                                    <th class="p-3">รุ่นเสื้อ</th>
+                                    <th class="p-3">จำนวน</th>
+                                    <th class="p-3">รูปแบบชำระ</th>
+                                    <th class="p-3">ราคารวม</th>
+                                    <th class="p-3">สถานะ</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-brand-gold/10">`;
+
+            if (allValidOrders.length === 0) {
+                salesReportHTML += `<tr><td colspan="7" class="p-6 text-center text-gray-500">ยังไม่มีข้อมูลการขาย</td></tr>`;
+            } else {
+                allValidOrders.forEach(o => {
+                    const payTypeName = o.paymentType === 'full' ? 'ชำระเต็มจำนวน' : 'มัดจำ 50%';
+                    salesReportHTML += `
+                        <tr class="hover:bg-black/30">
+                            <td class="p-3 font-bold text-white">#${o.id}</td>
+                            <td class="p-3">${o.customerName} ${o.agencyId ? '(' + o.agencyId + ')' : ''}</td>
+                            <td class="p-3">${o.model} (${o.color})</td>
+                            <td class="p-3">${o.quotation.quantity} ตัว</td>
+                            <td class="p-3 text-emerald-400">${payTypeName}</td>
+                            <td class="p-3 font-bold text-brand-gold">${o.quotation.totalPrice.toLocaleString()} บาท</td>
+                            <td class="p-3"><span class="px-2 py-0.5 bg-brand-darkRed text-brand-gold rounded text-[10px]">${o.status}</span></td>
+                        </tr>`;
+                });
+            }
+
+            salesReportHTML += `</tbody></table></div></div>`;
+            document.getElementById('admin-reports-content').innerHTML = salesReportHTML;
+
+            // หน้า 6: ฐานข้อมูลลูกค้าทั้งหมดของแอดมิน (Admin Master Database)
+            const masterDbContainer = document.getElementById('admin-database-list');
+            if (masterDbContainer) {
+                const allOrders = appState.orders.filter(o => o.status !== 'cancelled');
+                if (allOrders.length === 0) {
+                    masterDbContainer.innerHTML = '<p class="text-center text-gray-400 py-10">ยังไม่มีประวัติคำสั่งซื้อในระบบ</p>';
+                } else {
+                    let masterHtml = '';
+                    allOrders.forEach(o => {
+                        const payTypeName = o.paymentType === 'full' ? 'ชำระเต็มจำนวน' : 'มัดจำ 50%';
+                        const totalPrice = o.quotation ? o.quotation.totalPrice.toLocaleString() + ' บาท' : '-';
+                        const paidAmount = o.quotation ? (o.paymentType === 'full' ? o.quotation.totalPrice.toLocaleString() : Math.round(o.quotation.totalPrice / 2).toLocaleString()) + ' บาท' : '-';
+
+                        masterHtml += `
+                        <div class="bg-brand-charcoal border border-brand-gold/30 rounded-2xl p-6 shadow-xl space-y-4 mb-4">
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-brand-gold/20 pb-3 gap-2">
+                                <div>
+                                    <h3 class="text-white font-bold text-lg">Order #${o.id} - ${o.customerName}</h3>
+                                    <p class="text-xs text-gray-400">วันที่สั่ง: ${o.createdAt} ${o.agencyId ? '| ตัวแทน: ' + o.agencyId : '| ลูกค้าทั่วไป'}</p>
+                                </div>
+                                <span class="px-3 py-1 text-xs bg-brand-darkRed text-brand-gold rounded-full border border-brand-gold/40">${o.status}</span>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                                <div class="space-y-1">
+                                    <p class="text-gray-300"><strong>รุ่นเสื้อ:</strong> ${o.model} (${o.color})</p>
+                                    <p class="text-gray-300"><strong>งานตกแต่ง:</strong> ${o.decoration || '-'}</p>
+                                    <p class="text-gray-300"><strong>ไซส์และจำนวน:</strong> ${o.customerResponse ? o.customerResponse.sizesAndQty : '-'}</p>
+                                    <p class="text-gray-300"><strong>ที่อยู่จัดส่ง:</strong> ${o.customerResponse ? o.customerResponse.shippingAddress : '-'}</p>
+                                </div>
+                                <div class="space-y-1 bg-black/40 p-3 rounded-xl border border-brand-gold/20">
+                                    <p class="text-gray-300"><strong>ราคารวมทั้งสิ้น:</strong> <span class="text-brand-gold font-bold">${totalPrice}</span></p>
+                                    <p class="text-gray-300"><strong>รูปแบบการชำระ:</strong> <span class="text-emerald-400 font-bold">${payTypeName} (${paidAmount})</span></p>
+                                </div>
+                                <div class="flex items-center justify-center bg-black/40 p-3 rounded-xl border border-brand-gold/20">
+                                    ${o.paymentSlip ? `<div class="text-center"><p class="text-xs text-brand-gold font-bold mb-1">สลิปโอนเงิน:</p><img src="${o.paymentSlip}" class="h-24 object-contain rounded border border-emerald-500 mx-auto"></div>` : '<p class="text-xs text-amber-400">ยังไม่แจ้งชำระเงิน</p>'}
+                                </div>
+                            </div>
+                        </div>`;
+                    });
+                    masterDbContainer.innerHTML = masterHtml;
+                }
             }
         }
 
