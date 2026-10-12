@@ -37,7 +37,7 @@
 </head>
 <body class="h-full flex flex-col justify-between selection:bg-brand-gold selection:text-black">
 
-    <header class="bg-brand-darkRed border-b border-brand-gold/30 shadow-lg sticky top-0 z-50">
+    <header class="bg-brand-darkRed border-b border-brand-gold/30 shadow-lg sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <div class="flex items-center space-x-3 cursor-pointer" onclick="switchRole('home')">
                 <div class="w-12 h-12 rounded-full border-2 border-brand-gold bg-brand-charcoal flex items-center justify-center shadow-md overflow-hidden flex-shrink-0">
@@ -49,7 +49,7 @@
                 </div>
             </div>
             <div id="nav-auth-area" class="flex items-center space-x-4">
-                <button onclick="openLoginModal()" class="gold-btn-gradient text-black font-semibold px-5 py-2.5 rounded-xl shadow-lg flex items-center space-x-2 transition transform hover:scale-105 active:scale-95">
+                <button type="button" onclick="openLoginModal()" class="gold-btn-gradient text-black font-semibold px-5 py-2.5 rounded-xl shadow-lg flex items-center space-x-2 transition cursor-pointer relative z-50">
                     <i class="fa-solid fa-right-to-bracket"></i><span>LOGIN</span>
                 </button>
             </div>
@@ -67,7 +67,7 @@
                 <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">ยินดีต้อนรับสู่ <span class="gold-gradient lordcops-font">A.CHA Clothes Shop</span></h2>
                 <p class="text-gray-300 text-base sm:text-lg mb-8 leading-relaxed">บริการรับทำเสื้อยูนิฟอร์ม เสื้อโปโล เสื้อทีม พร้อมงานปักและสกรีน DTF เกรดพรีเมียม</p>
                 <div class="flex flex-wrap justify-center gap-4 mb-8">
-                    <button onclick="openLoginModal()" class="gold-btn-gradient text-black font-bold px-8 py-3.5 rounded-xl shadow-lg flex items-center space-x-3 text-lg transition transform hover:scale-105">
+                    <button type="button" onclick="openLoginModal()" class="gold-btn-gradient text-black font-bold px-8 py-3.5 rounded-xl shadow-lg flex items-center space-x-3 text-lg transition transform hover:scale-105 cursor-pointer">
                         <i class="fa-solid fa-user-circle"></i><span>เข้าสู่ระบบ / สมัครใช้งาน</span>
                     </button>
                 </div>
@@ -165,35 +165,35 @@
         </div>
     </main>
 
- <!-- Login Modal -->
-<div id="login-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[999999] flex items-center justify-center p-4 hidden" style="pointer-events: auto;">
-    <div class="bg-brand-charcoal border-2 border-brand-gold rounded-3xl max-w-md w-full p-6 shadow-2xl relative" style="pointer-events: auto;">
-        <button type="button" onclick="closeLoginModal()" ontouchstart="closeLoginModal()" class="absolute top-4 right-4 text-gray-400 hover:text-brand-gold text-2xl p-3 z-50 cursor-pointer" style="-webkit-tap-highlight-color: transparent;"><i class="fa-solid fa-xmark"></i></button>
-        <div class="text-center mb-6">
-            <div class="w-16 h-16 rounded-full bg-brand-gold/10 border-2 border-brand-gold flex items-center justify-center mx-auto mb-3 overflow-hidden">
-                <img src="logo.jpg" alt="Logo" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/100x100/800000/D4AF37?text=ACHA'">
+    <!-- Login Modal -->
+    <div id="login-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[99999] flex items-center justify-center p-4 hidden">
+        <div class="bg-brand-charcoal border-2 border-brand-gold rounded-3xl max-w-md w-full p-6 shadow-2xl relative">
+            <button type="button" onclick="closeLoginModal()" class="absolute top-4 right-4 text-gray-400 hover:text-brand-gold text-2xl p-2 z-50 cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 rounded-full bg-brand-gold/10 border-2 border-brand-gold flex items-center justify-center mx-auto mb-3 overflow-hidden">
+                    <img src="logo.jpg" alt="Logo" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/100x100/800000/D4AF37?text=ACHA'">
+                </div>
+                <h3 class="text-2xl font-bold gold-gradient lordcops-font">เข้าสู่ระบบ (LOGIN)</h3>
             </div>
-            <h3 class="text-2xl font-bold gold-gradient lordcops-font">เข้าสู่ระบบ (LOGIN)</h3>
-        </div>
-        <div class="flex border-b border-brand-gold/30 mb-6">
-            <button type="button" onclick="switchLoginTab('customer')" class="flex-1 pb-3 font-semibold text-brand-gold border-b-2 border-brand-gold transition cursor-pointer"><i class="fa-brands fa-line mr-2"></i>ลูกค้าทั่วไป</button>
-            <button type="button" onclick="switchLoginTab('admin')" class="flex-1 pb-3 font-semibold text-gray-400 hover:text-brand-gold transition cursor-pointer"><i class="fa-solid fa-user-shield mr-2"></i>เจ้าหน้าที่/ตัวแทน</button>
-        </div>
-        <div id="login-section-customer" class="space-y-4">
-            <button type="button" onclick="simulateLineLogin()" class="w-full bg-[#06C755] hover:bg-[#05b34c] text-white font-bold py-3.5 rounded-xl flex justify-center items-center space-x-2 shadow-lg cursor-pointer" style="touch-action: manipulation;">
-                <i class="fa-brands fa-line text-xl"></i><span>เข้าสู่ระบบลูกค้า (LINE)</span>
-            </button>
-        </div>
-        <div id="login-section-admin" class="space-y-4 hidden">
-            <form onsubmit="handleAdminLogin(event)" class="space-y-4">
-                <p class="text-xs text-brand-gold mb-2 text-center">ID ตัวแทน: YAG_1, BAG_2, AAG_3 | ID Admin: ACHA, ACHA2</p>
-                <input type="text" id="admin-username" required placeholder="รหัสผู้ใช้งาน (ID)" class="w-full bg-black/50 border border-brand-gold/40 rounded-xl px-4 py-3 text-white">
-                <input type="password" id="admin-password" required placeholder="รหัสผ่าน (Password)" class="w-full bg-black/50 border border-brand-gold/40 rounded-xl px-4 py-3 text-white">
-                <button type="submit" class="w-full gold-btn-gradient text-black font-bold py-3.5 rounded-xl shadow-lg cursor-pointer" style="touch-action: manipulation;"><i class="fa-solid fa-right-to-bracket mr-2"></i>เข้าสู่ระบบ</button>
-            </form>
+            <div class="flex border-b border-brand-gold/30 mb-6">
+                <button type="button" onclick="switchLoginTab('customer')" id="login-tab-cust" class="flex-1 pb-3 font-semibold text-brand-gold border-b-2 border-brand-gold transition cursor-pointer"><i class="fa-brands fa-line mr-2"></i>ลูกค้าทั่วไป</button>
+                <button type="button" onclick="switchLoginTab('admin')" id="login-tab-adm" class="flex-1 pb-3 font-semibold text-gray-400 hover:text-brand-gold transition cursor-pointer"><i class="fa-solid fa-user-shield mr-2"></i>เจ้าหน้าที่/ตัวแทน</button>
+            </div>
+            <div id="login-section-customer" class="space-y-4">
+                <button type="button" onclick="simulateLineLogin()" class="w-full bg-[#06C755] hover:bg-[#05b34c] text-white font-bold py-3.5 rounded-xl flex justify-center items-center space-x-2 shadow-lg cursor-pointer">
+                    <i class="fa-brands fa-line text-xl"></i><span>เข้าสู่ระบบลูกค้า (LINE)</span>
+                </button>
+            </div>
+            <div id="login-section-admin" class="space-y-4 hidden">
+                <form onsubmit="handleAdminLogin(event)" class="space-y-4">
+                    <p class="text-xs text-brand-gold mb-2 text-center">ID ตัวแทน: YAG_1, BAG_2, AAG_3 | ID Admin: ACHA, ACHA2</p>
+                    <input type="text" id="admin-username" required placeholder="รหัสผู้ใช้งาน (ID)" class="w-full bg-black/50 border border-brand-gold/40 rounded-xl px-4 py-3 text-white">
+                    <input type="password" id="admin-password" required placeholder="รหัสผ่าน (Password)" class="w-full bg-black/50 border border-brand-gold/40 rounded-xl px-4 py-3 text-white">
+                    <button type="submit" class="w-full gold-btn-gradient text-black font-bold py-3.5 rounded-xl shadow-lg cursor-pointer"><i class="fa-solid fa-right-to-bracket mr-2"></i>เข้าสู่ระบบ</button>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 
     <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col space-y-3 pointer-events-none"></div>
 
@@ -297,23 +297,30 @@
             }
         }
 
-        async function deleteOrderFromCloud(orderId) {
-    try {
-        const order = appState.orders.find(o => o.id === orderId);
-        if (order) {
-            order.status = 'cancelled';
-            await saveOrderToCloud(order);
-            showToast('ล้างข้อมูลออเดอร์เรียบร้อยแล้ว!', 'success');
-            await fetchCloudOrders();
-            renderAdminPages();
-            return true;
+        async function confirmAndDeleteOrder(orderId) {
+            if (confirm(`คุณต้องการยกเลิกและล้างข้อมูลออเดอร์ #${orderId} ออกจากระบบใช่หรือไม่?`)) {
+                await deleteOrderFromCloud(orderId);
+            }
         }
-    } catch (err) {
-        console.error('ล้างข้อมูลล้มเหลว', err);
-        showToast('ล้างข้อมูลไม่สำเร็จ: ' + err.message, 'error');
-        return false;
-    }
-}
+
+        // ฟังก์ชันลบที่ถูกปรับปรุงให้ใช้การซ่อน (เปลี่ยนสถานะเป็น cancelled) แทนการลบจากฐานข้อมูลจริงๆ
+        async function deleteOrderFromCloud(orderId) {
+            try {
+                const order = appState.orders.find(o => o.id === orderId);
+                if (order) {
+                    order.status = 'cancelled';
+                    await saveOrderToCloud(order);
+                    showToast('ล้างข้อมูลออเดอร์เรียบร้อยแล้ว!', 'success');
+                    await fetchCloudOrders();
+                    renderAdminPages();
+                    return true;
+                }
+            } catch (err) {
+                console.error('ล้างข้อมูลล้มเหลว', err);
+                showToast('ล้างข้อมูลไม่สำเร็จ: ' + err.message, 'error');
+                return false;
+            }
+        }
 
         function showToast(message, type) {
             if (!type) type = 'success';
@@ -347,22 +354,21 @@
             setupRealtimeListener();
         };
 
-       function openLoginModal() { 
-    const modal = document.getElementById('login-modal');
-    if (modal) {
-        modal.classList.remove('hidden'); 
-        modal.style.display = 'flex';
-        modal.style.zIndex = '999999';
-    }
-}
+        function openLoginModal() { 
+            const modal = document.getElementById('login-modal');
+            if (modal) {
+                modal.classList.remove('hidden'); 
+                modal.style.display = 'flex';
+            }
+        }
 
-function closeLoginModal() { 
-    const modal = document.getElementById('login-modal');
-    if (modal) {
-        modal.classList.add('hidden'); 
-        modal.style.display = 'none';
-    }
-}
+        function closeLoginModal() { 
+            const modal = document.getElementById('login-modal');
+            if (modal) {
+                modal.classList.add('hidden'); 
+                modal.style.display = 'none';
+            }
+        }
         
         function switchLoginTab(type) {
             const custSec = document.getElementById('login-section-customer'); const admSec = document.getElementById('login-section-admin');
@@ -420,9 +426,7 @@ function closeLoginModal() {
             const dbTab = document.getElementById('cust-tab-6-btn');
 
             if (!appState.currentUser) {
-                navAuth.innerHTML = <button type="button" onclick="openLoginModal()" ontouchstart="openLoginModal()" class="gold-btn-gradient text-black font-semibold px-5 py-2.5 rounded-xl shadow-lg flex items-center space-x-2 transition cursor-pointer relative z-50" style="touch-action: manipulation; -webkit-tap-highlight-color: transparent;">
-    <i class="fa-solid fa-right-to-bracket"></i><span>LOGIN</span>
-</button>;
+                navAuth.innerHTML = '<button type="button" onclick="openLoginModal()" class="gold-btn-gradient text-black font-semibold px-5 py-2.5 rounded-xl shadow-lg flex items-center space-x-2 transition cursor-pointer relative z-50"><i class="fa-solid fa-right-to-bracket"></i><span>LOGIN</span></button>';
                 switchRole('home');
             } else if (appState.currentUser.role === 'customer' || appState.currentUser.role === 'agency') {
                 const icon = appState.currentUser.role === 'agency' ? 'fa-id-badge' : 'fa-line';
@@ -1018,7 +1022,7 @@ function closeLoginModal() {
             salesReportHTML += `</tbody></table></div></div>`;
             document.getElementById('admin-reports-content').innerHTML = salesReportHTML;
 
-           // หน้า 6: ฐานข้อมูลลูกค้าทั้งหมดของแอดมิน (แสดงเฉพาะออเดอร์ที่ไม่ถูกยกเลิก)
+            // หน้า 6: ฐานข้อมูลลูกค้าทั้งหมดของแอดมิน (แสดงเฉพาะออเดอร์ที่ไม่ถูกยกเลิก)
             const masterDbContainer = document.getElementById('admin-database-list');
             if (masterDbContainer) {
                 const allOrders = appState.orders.filter(o => o.status !== 'cancelled');
@@ -1056,7 +1060,7 @@ function closeLoginModal() {
                                 <div class="space-y-1 bg-black/40 p-3 rounded-xl border border-brand-gold/20">
                                     <p class="text-gray-300"><strong>ราคารวมทั้งสิ้น:</strong> <span class="text-brand-gold font-bold">${totalPrice}</span></p>
                                     <p class="text-gray-300"><strong>รูปแบบการชำระ:</strong> <span class="text-emerald-400 font-bold">${payTypeName} (${paidAmount})</span></p>
-                                    ${o.paymentSlip ? `<div class="mt-2"><p class="text-xs text-brand-gold font-bold mb-1">สลิปการโอนเงิน:</p><img src="${o.paymentSlip}" class="h-16 object-contain rounded border border-emerald-500"></div>` : '<p class="text-xs text-amber-400 mt-2">ยังไม่แจ้งชำระเงิน</p>'}
+                                    ${o.paymentSlip ? `<div class="mt-2"><p class="text-xs text-brand-gold font-bold mb-1">สลิปโอนเงิน:</p><img src="${o.paymentSlip}" class="h-16 object-contain rounded border border-emerald-500"></div>` : '<p class="text-xs text-amber-400 mt-2">ยังไม่แจ้งชำระเงิน</p>'}
                                 </div>
                                 <div class="bg-black/40 p-3 rounded-xl border border-brand-gold/20 text-center">
                                     <p class="text-xs text-brand-gold font-bold mb-2"><i class="fa-solid fa-eye mr-1"></i> แบบที่ตกลง (หน้า 3)</p>
@@ -1067,28 +1071,6 @@ function closeLoginModal() {
                     });
                     masterDbContainer.innerHTML = masterHtml;
                 }
-            }
-        async function confirmAndDeleteOrder(orderId) {
-            if (confirm(`คุณต้องการยกเลิกและล้างข้อมูลออเดอร์ #${orderId} ออกจากระบบใช่หรือไม่?`)) {
-                await deleteOrderFromCloud(orderId);
-            }
-        }
-
-        async function deleteOrderFromCloud(orderId) {
-            try {
-                const order = appState.orders.find(o => o.id === orderId);
-                if (order) {
-                    order.status = 'cancelled';
-                    await saveOrderToCloud(order);
-                    showToast('ล้างข้อมูลออเดอร์เรียบร้อยแล้ว!', 'success');
-                    await fetchCloudOrders();
-                    renderAdminPages();
-                    return true;
-                }
-            } catch (err) {
-                console.error('ล้างข้อมูลล้มเหลว', err);
-                showToast('ล้างข้อมูลไม่สำเร็จ: ' + err.message, 'error');
-                return false;
             }
         }
 
