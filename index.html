@@ -143,4 +143,505 @@
                 <button onclick="switchAdminTab(2)" class="admin-tab px-4 py-2.5 rounded-xl text-sm font-medium transition text-gray-300 hover:text-brand-gold" data-tab="2"><i class="fa-solid fa-upload"></i><span>2. ส่งแบบเสร็จ</span></button>
                 <button onclick="switchAdminTab(3)" class="admin-tab px-4 py-2.5 rounded-xl text-sm font-medium transition text-gray-300 hover:text-brand-gold" data-tab="3"><i class="fa-solid fa-calculator"></i><span>3. การเงิน</span></button>
                 <button onclick="switchAdminTab(4)" class="admin-tab px-4 py-2.5 rounded-xl text-sm font-medium transition text-gray-300 hover:text-brand-gold" data-tab="4"><i class="fa-solid fa-industry"></i><span>4. ลายผลิต</span></button>
-                <button onclick="switchAdminTab
+                <button onclick="switchAdminTab(5)" class="admin-tab px-4 py-2.5 rounded-xl text-sm font-medium transition text-gray-300 hover:text-brand-gold" data-tab="5"><i class="fa-solid fa-chart-line"></i><span>5. ยอดขาย</span></button>
+                <button onclick="switchAdminTab(6)" class="admin-tab px-4 py-2.5 rounded-xl text-sm font-medium transition text-gray-300 hover:text-brand-gold" data-tab="6"><i class="fa-solid fa-database"></i><span>6. ฐานข้อมูลลูกค้า</span></button>
+            </div>
+            
+            <div id="admin-page-1" class="admin-page space-y-6"><div class="border-b border-brand-gold/30 pb-4 mb-6"><h2 class="text-2xl font-bold text-white"><i class="fa-solid fa-inbox text-brand-gold mr-2"></i>คำสั่งซื้อในความรับผิดชอบ</h2></div><div id="admin-queue-list" class="space-y-4"></div></div>
+            <div id="admin-page-2" class="admin-page space-y-6 hidden"><div class="border-b border-brand-gold/30 pb-4 mb-6"><h2 class="text-2xl font-bold text-white"><i class="fa-solid fa-upload text-brand-gold mr-2"></i>อัปโหลดแบบที่เสร็จแล้ว</h2></div><div class="bg-brand-charcoal/80 border border-brand-gold/30 rounded-2xl p-6 shadow-xl"><form onsubmit="adminUploadFinishedDesign(event)" class="space-y-6 max-w-2xl mx-auto"><div><label class="block text-brand-gold font-semibold mb-2">เลือกคำสั่งซื้อ</label><select id="admin-select-order" required class="w-full bg-black/50 border border-brand-gold/40 rounded-xl px-4 py-3 text-white"></select></div><div><label class="block text-brand-gold font-semibold mb-2">รูปภาพแบบ</label><input type="file" id="admin-finished-img" accept="image/*" required class="w-full text-sm text-gray-300 file:bg-brand-gold file:text-black bg-black/40 border border-brand-gold/40 rounded-xl p-2"></div><div><label class="block text-brand-gold font-semibold mb-2">หมายเหตุ</label><textarea id="admin-design-notes" rows="3" class="w-full bg-black/50 border border-brand-gold/40 rounded-xl p-3 text-white"></textarea></div><button type="submit" class="w-full gold-btn-gradient text-black font-bold py-3.5 rounded-xl shadow-lg">ส่งแบบให้ลูกค้า</button></form></div></div>
+            <div id="admin-page-3" class="admin-page space-y-6 hidden"><div class="border-b border-brand-gold/30 pb-4 mb-6"><h2 class="text-2xl font-bold text-white"><i class="fa-solid fa-calculator text-brand-gold mr-2"></i>การเงิน & ใบงาน</h2></div><div id="admin-finance-list" class="space-y-6"></div></div>
+            <div id="admin-page-4" class="admin-page space-y-6 hidden"><div class="border-b border-brand-gold/30 pb-4 mb-6"><h2 class="text-2xl font-bold text-white"><i class="fa-solid fa-industry text-brand-gold mr-2"></i>ลายผลิต</h2></div><div id="admin-production-list" class="space-y-6"></div></div>
+            <div id="admin-page-5" class="admin-page space-y-6 hidden"><div class="border-b border-brand-gold/30 pb-4 mb-6"><h2 class="text-2xl font-bold text-white"><i class="fa-solid fa-chart-line text-brand-gold mr-2"></i>สรุปยอดขาย</h2></div><div id="admin-reports-content" class="space-y-8"></div></div>
+            <div id="admin-page-6" class="admin-page space-y-6 hidden"><div class="border-b border-brand-gold/30 pb-4 mb-6"><h2 class="text-2xl font-bold text-white"><i class="fa-solid fa-database text-brand-gold mr-2"></i>ฐานข้อมูล (ประวัติคำสั่งซื้อ)</h2></div><div id="admin-database-list" class="space-y-4"></div></div>
+        </div>
+    </main>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-brand-charcoal border-2 border-brand-gold rounded-3xl max-w-md w-full p-6 shadow-2xl relative">
+            <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-gray-400 hover:text-brand-gold text-xl"><i class="fa-solid fa-xmark"></i></button>
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 rounded-full bg-brand-gold/10 border-2 border-brand-gold flex items-center justify-center mx-auto mb-3 overflow-hidden">
+                    <img src="logo.jpg" alt="Logo" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/100x100/800000/D4AF37?text=ACHA'">
+                </div>
+                <h3 class="text-2xl font-bold gold-gradient lordcops-font">เข้าสู่ระบบ (LOGIN)</h3>
+            </div>
+            <div class="flex border-b border-brand-gold/30 mb-6">
+                <button onclick="switchLoginTab('customer')" id="login-tab-cust" class="flex-1 pb-3 font-semibold text-brand-gold border-b-2 border-brand-gold transition"><i class="fa-brands fa-line mr-2"></i>ลูกค้าทั่วไป</button>
+                <button onclick="switchLoginTab('admin')" id="login-tab-adm" class="flex-1 pb-3 font-semibold text-gray-400 hover:text-brand-gold transition"><i class="fa-solid fa-user-shield mr-2"></i>เจ้าหน้าที่/ตัวแทน</button>
+            </div>
+            <div id="login-section-customer" class="space-y-4">
+                <button onclick="simulateLineLogin()" class="w-full bg-[#06C755] hover:bg-[#05b34c] text-white font-bold py-3.5 rounded-xl flex justify-center items-center space-x-2">
+                    <i class="fa-brands fa-line text-xl"></i><span>เข้าสู่ระบบลูกค้า (LINE)</span>
+                </button>
+            </div>
+            <div id="login-section-admin" class="space-y-4 hidden">
+                <form onsubmit="handleAdminLogin(event)" class="space-y-4">
+                    <p class="text-xs text-brand-gold mb-2 text-center">ID ตัวแทน: YAG_1, BAG_2, AAG_3 | ID Admin: ACHA, ACHA2</p>
+                    <input type="text" id="admin-username" required placeholder="รหัสผู้ใช้งาน (ID)" class="w-full bg-black/50 border border-brand-gold/40 rounded-xl px-4 py-3 text-white">
+                    <input type="password" id="admin-password" required placeholder="รหัสผ่าน (Password)" class="w-full bg-black/50 border border-brand-gold/40 rounded-xl px-4 py-3 text-white">
+                    <button type="submit" class="w-full gold-btn-gradient text-black font-bold py-3.5 rounded-xl"><i class="fa-solid fa-right-to-bracket mr-2"></i>เข้าสู่ระบบ</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col space-y-3 pointer-events-none"></div>
+
+    <script>
+        const SUPABASE_URL = 'https://edvwrxuatrswgljygxhn.supabase.co'; 
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkdndyeHVhdHJzd2dsanlneGhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE2Mjg2NTIsImV4cCI6MjEwNzIwNDY1Mn0.e4O8IJ5UWqUv8MoIRH0NlBZz9gwiVeuHu2uhtHelzYM'; 
+        
+        // ผูกตัวแปรให้เป็น Global เพื่อให้ Console และฟังก์ชันเรียกใช้ได้ชัวร์
+        window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabaseClient = window.supabaseClient;
+
+        let appState = { currentUser: null, selectedModel: 'A1', orders: [] };
+
+        const SHIRT_MODELS = [
+            { id: 'A1', name: 'รุ่น A1 - เสื้อผ้าฝ้าย/ผ้าร่ม', img: '1.jpg' }, { id: 'A2', name: 'รุ่น A2 - เสื้อผ้าโพลี', img: '2.jpg' },
+            { id: 'A3', name: 'รุ่น A3 - เสื้อผ้าไมโคร', img: '3.jpg' }, { id: 'A4', name: 'รุ่น A4 - เสื้อผ้าร่ม (ฮู้ดถอดได้)', img: '4.jpg' },
+            { id: 'A5', name: 'รุ่น A5 - เสื้อโพลีเอสเตอร์', img: '5.jpg' }, { id: 'A6', name: 'รุ่น A6 - เสื้อกัน UV', img: '6.jpg' },
+            { id: 'A7', name: 'รุ่น A7 - แจ็คเก็ตผ้าสเปนเด็ก', img: '7.jpg' }, { id: 'A8', name: 'รุ่น A8 - แจ็คเก็ตผ้าไมโครพีช', img: '8.jpg' },
+            { id: 'A9', name: 'รุ่น A9 - แจ็คเก็ตผ้าโพลี', img: '9.jpg' }, { id: 'B1', name: 'รุ่น B1 - เสื้อกั๊กโพลีเอสเตอร์', img: 'B1.jpg' }
+        ];
+
+        const POSITIONS = [
+            { key: 'leftChest', label: 'อกซ้าย' }, { key: 'rightChest', label: 'อกขวา' },
+            { key: 'leftSleeve', label: 'แขนซ้าย' }, { key: 'rightSleeve', label: 'แขนขวา' }, { key: 'back', label: 'หลัง' }
+        ];
+        const PRODUCTION_STAGES = [
+            { key: 'prepare', label: 'เตรียมเสื้อ' }, { key: 'dtfPrint', label: 'พิมพ์ DTF' }, { key: 'embBlock', label: 'บล็อคปัก' },
+            { key: 'embroidery', label: 'ลงปัก' }, { key: 'dtfPress', label: 'รีด DTF' }, { key: 'shipping', label: 'จัดส่ง' }
+        ];
+
+        async function fetchCloudOrders() {
+            try {
+                const { data, error } = await supabaseClient.from('orders').select('*');
+                if (!error && data) {
+                    appState.orders = data.map(item => ({
+                        id: item.id,
+                        customerName: item.customer_name,
+                        agencyId: item.agency_id,
+                        model: item.model,
+                        color: item.color,
+                        decoration: item.decoration,
+                        positions: item.positions,
+                        createdAt: item.created_at,
+                        adminFinishedDesign: item.admin_finished_design,
+                        status: item.status,
+                        orderSpecs: item.order_specs,
+                        quotation: item.quotation,
+                        payment: item.payment,
+                        adminPaymentImage: item.admin_payment_image,
+                        productionSchedule: item.production_schedule,
+                        productionProgress: item.production_progress || { prepare: { done: false, img: null }, dtfPrint: { done: false, img: null }, embBlock: { done: false, img: null }, embroidery: { done: false, img: null }, dtfPress: { done: false, img: null }, shipping: { done: false, img: null } }
+                    })).reverse();
+                }
+            } catch (err) {
+                console.error('โหลดข้อมูลล้มเหลว', err);
+            }
+        }
+
+        async function saveOrderToCloud(order) {
+            try {
+                const payload = {
+                    id: order.id,
+                    customer_name: order.customerName,
+                    agency_id: order.agencyId,
+                    model: order.model,
+                    color: order.color,
+                    decoration: order.decoration,
+                    positions: order.positions,
+                    status: order.status,
+                    admin_finished_design: order.adminFinishedDesign,
+                    quotation: order.quotation,
+                    payment: order.payment,
+                    admin_payment_image: order.adminPaymentImage,
+                    production_progress: order.productionProgress,
+                    created_at: order.createdAt
+                };
+                const { error } = await supabaseClient.from('orders').upsert(payload);
+                if (error) {
+                    showToast('บันทึกลงคลาวด์ไม่สำเร็จ: ' + error.message, 'error');
+                } else {
+                    showToast('บันทึกข้อมูลสำเร็จ!', 'success');
+                }
+            } catch (err) {
+                console.error('เชื่อมต่อคลาวด์ล้มเหลว', err);
+            }
+        }
+
+        function showToast(message, type) {
+            if (!type) type = 'success';
+            const container = document.getElementById('toast-container'); const toast = document.createElement('div');
+            toast.className = (type === 'success' ? 'bg-emerald-900 border-emerald-500' : 'bg-red-900 border-red-500') + ' border text-white px-6 py-4 rounded-xl shadow-2xl flex items-center space-x-3 pointer-events-auto';
+            toast.innerHTML = '<i class="fa-solid ' + (type === 'success' ? 'fa-circle-check text-emerald-400' : 'fa-circle-exclamation text-red-400') + ' text-xl"></i><span class="font-medium text-sm">' + message + '</span>';
+            container.appendChild(toast); setTimeout(function() { toast.remove(); }, 3000);
+        }
+
+        // ระบบ Realtime อัปเดตหน้าจออัตโนมัติเมื่ออีกเครื่องเปลี่ยนข้อมูล
+        function setupRealtimeListener() {
+            supabaseClient
+                .channel('public:orders')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, async payload => {
+                    await fetchCloudOrders();
+                    if (appState.currentUser) {
+                        if (appState.currentUser.role === 'customer' || appState.currentUser.role === 'agency') {
+                            renderCustomerPages();
+                        } else {
+                            renderAdminPages();
+                        }
+                    }
+                })
+                .subscribe();
+        }
+
+        window.onload = async function() {
+            await fetchCloudOrders();
+            const savedUser = localStorage.getItem('acha_current_user');
+            if (savedUser) { appState.currentUser = JSON.parse(savedUser); applyUserRoleUI(); } else { switchRole('home'); }
+            renderCatalog(); renderPositionsForm();
+            setupRealtimeListener();
+        };
+
+        function openLoginModal() { document.getElementById('login-modal').classList.remove('hidden'); }
+        function closeLoginModal() { document.getElementById('login-modal').classList.add('hidden'); }
+        
+        function switchLoginTab(type) {
+            const custSec = document.getElementById('login-section-customer'); const admSec = document.getElementById('login-section-admin');
+            const custTab = document.getElementById('login-tab-cust'); const admTab = document.getElementById('login-tab-adm');
+            if (type === 'customer') {
+                custSec.classList.remove('hidden'); admSec.classList.add('hidden');
+                custTab.classList.add('text-brand-gold', 'border-b-2', 'border-brand-gold'); custTab.classList.remove('text-gray-400');
+                admTab.classList.remove('text-brand-gold', 'border-b-2', 'border-brand-gold'); admTab.classList.add('text-gray-400');
+            } else {
+                custSec.classList.add('hidden'); admSec.classList.remove('hidden');
+                admTab.classList.add('text-brand-gold', 'border-b-2', 'border-brand-gold'); admTab.classList.remove('text-gray-400');
+                custTab.classList.remove('text-brand-gold', 'border-b-2', 'border-brand-gold'); custTab.classList.add('text-gray-400');
+            }
+        }
+
+        function simulateLineLogin() {
+            appState.currentUser = { role: 'customer', name: 'คุณลูกค้า (LINE)', id: null };
+            localStorage.setItem('acha_current_user', JSON.stringify(appState.currentUser));
+            closeLoginModal(); showToast('เข้าสู่ระบบลูกค้าสำเร็จ!', 'success'); applyUserRoleUI();
+        }
+
+        function handleAdminLogin(e) {
+            e.preventDefault();
+            const id = document.getElementById('admin-username').value.trim();
+            const pass = document.getElementById('admin-password').value.trim();
+
+            if (id === 'ACHA' && pass === '231165') {
+                appState.currentUser = { role: 'admin_main', name: 'Admin หลัก', id: id };
+                showToast('เข้าสู่ระบบ แอดมินหลัก สำเร็จ!', 'success');
+            } else if (id === 'ACHA2' && pass === 'BOPBY34') {
+                appState.currentUser = { role: 'admin_agency', name: 'Admin ดูแลตัวแทน', id: id };
+                showToast('เข้าสู่ระบบ Admin 2 สำเร็จ!', 'success');
+            } else if (id === 'YAG_1' && pass === 'Titiya28.') {
+                appState.currentUser = { role: 'agency', name: 'ตัวแทนจำหน่าย (YAG_1)', id: id };
+                showToast('เข้าสู่ระบบ Agency 1 สำเร็จ!', 'success');
+            } else if (id === 'BAG_2' && pass === 'bank03012540') {
+                appState.currentUser = { role: 'agency', name: 'ตัวแทนจำหน่าย (BAG_2)', id: id };
+                showToast('เข้าสู่ระบบ Agency 2 สำเร็จ!', 'success');
+            } else if (id === 'AAG_3' && pass === 'Aom456') {
+                appState.currentUser = { role: 'agency', name: 'ตัวแทนจำหน่าย (AAG_3)', id: id };
+                showToast('เข้าสู่ระบบ Agency 3 สำเร็จ!', 'success');
+            } else {
+                return showToast('ID หรือ Password ไม่ถูกต้อง', 'error');
+            }
+            
+            localStorage.setItem('acha_current_user', JSON.stringify(appState.currentUser));
+            closeLoginModal(); applyUserRoleUI();
+        }
+
+        function logout() { localStorage.removeItem('acha_current_user'); appState.currentUser = null; switchRole('home'); showToast('ออกจากระบบเรียบร้อย', 'success'); }
+
+        async function applyUserRoleUI() {
+            await fetchCloudOrders();
+            const navAuth = document.getElementById('nav-auth-area');
+            const dbTab = document.getElementById('cust-tab-6-btn');
+
+            if (!appState.currentUser) {
+                navAuth.innerHTML = '<button onclick="openLoginModal()" class="gold-btn-gradient text-black font-semibold px-5 py-2.5 rounded-xl shadow-lg flex items-center space-x-2"><i class="fa-solid fa-right-to-bracket"></i><span>LOGIN</span></button>';
+                switchRole('home');
+            } else if (appState.currentUser.role === 'customer' || appState.currentUser.role === 'agency') {
+                const icon = appState.currentUser.role === 'agency' ? 'fa-id-badge' : 'fa-line';
+                navAuth.innerHTML = '<div class="flex items-center space-x-3"><span class="text-brand-gold text-sm"><i class="fa-solid ' + icon + ' mr-1"></i>' + appState.currentUser.name + '</span><button onclick="switchRole(\'customer\')" class="bg-brand-darkRed text-brand-gold border border-brand-gold/40 px-3 py-1.5 rounded-lg text-xs">หน้าจัดการ</button><button onclick="logout()" class="text-gray-400 hover:text-red-400 p-2"><i class="fa-solid fa-power-off"></i></button></div>';
+                
+                if (appState.currentUser.role === 'agency' && dbTab) dbTab.classList.remove('hidden');
+                else if (dbTab) dbTab.classList.add('hidden');
+
+                switchRole('customer');
+            } else {
+                navAuth.innerHTML = '<div class="flex items-center space-x-3"><span class="text-brand-gold text-sm"><i class="fa-solid fa-user-shield mr-1"></i>' + appState.currentUser.name + '</span><button onclick="switchRole(\'admin\')" class="bg-brand-darkRed text-brand-gold border border-brand-gold/40 px-3 py-1.5 rounded-lg text-xs">ระบบ Admin</button><button onclick="logout()" class="text-gray-400 hover:text-red-400 p-2"><i class="fa-solid fa-power-off"></i></button></div>';
+                switchRole('admin');
+            }
+        }
+
+        async function switchRole(role) {
+            await fetchCloudOrders();
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            if (role === 'home') document.getElementById('view-home').classList.remove('hidden');
+            else if (role === 'customer') { document.getElementById('view-customer').classList.remove('hidden'); renderCustomerPages(); switchCustomerTab(1); }
+            else if (role === 'admin') { document.getElementById('view-admin').classList.remove('hidden'); renderAdminPages(); switchAdminTab(1); }
+        }
+
+        function switchCustomerTab(tabNum) {
+            document.querySelectorAll('.cust-page').forEach(el => el.classList.add('hidden'));
+            document.getElementById('cust-page-' + tabNum).classList.remove('hidden');
+            document.querySelectorAll('.cust-tab').forEach(btn => btn.className = "cust-tab px-4 py-2.5 rounded-xl text-sm font-medium transition flex items-center space-x-2 text-gray-300 hover:text-brand-gold");
+            const activeBtn = document.querySelector('.cust-tab[data-tab="' + tabNum + '"]');
+            if (activeBtn) activeBtn.className = "cust-tab px-4 py-2.5 rounded-xl text-sm font-medium transition flex items-center space-x-2 bg-brand-darkRed text-brand-gold border border-brand-gold/40 shadow";
+            renderCustomerPages();
+        }
+
+        async function switchAdminTab(tabNum) {
+            await fetchCloudOrders();
+            document.querySelectorAll('.admin-page').forEach(el => el.classList.add('hidden'));
+            document.getElementById('admin-page-' + tabNum).classList.remove('hidden');
+            document.querySelectorAll('.admin-tab').forEach(btn => btn.className = "admin-tab px-4 py-2.5 rounded-xl text-sm font-medium transition flex items-center space-x-2 text-gray-300 hover:text-brand-gold");
+            const activeBtn = document.querySelector('.admin-tab[data-tab="' + tabNum + '"]');
+            if (activeBtn) activeBtn.className = "admin-tab px-4 py-2.5 rounded-xl text-sm font-medium transition flex items-center space-x-2 bg-brand-darkRed text-brand-gold border border-brand-gold/40 shadow";
+            renderAdminPages();
+        }
+
+        function renderCatalog() {
+            let html = '';
+            for (let i = 0; i < SHIRT_MODELS.length; i++) {
+                const model = SHIRT_MODELS[i];
+                html += '<div class="bg-brand-charcoal border border-brand-gold/30 rounded-2xl p-4 flex flex-col justify-between shadow-lg"><div><div class="w-full h-60 rounded-xl overflow-hidden bg-black mb-4"><img src="' + model.img + '" alt="' + model.name + '" class="w-full h-full object-cover"></div><h3 class="font-bold text-lg text-white mb-4">' + model.name + '</h3></div><button onclick="selectShirtModel(\'' + model.id + '\')" class="w-full gold-btn-gradient text-black font-semibold py-2.5 rounded-xl shadow flex items-center justify-center space-x-2 text-sm"><i class="fa-solid fa-pen-nib"></i><span>สั่งทำแบบ</span></button></div>';
+            }
+            document.getElementById('catalog-grid').innerHTML = html;
+        }
+
+        function selectShirtModel(modelId) { appState.selectedModel = modelId; document.getElementById('selected-shirt-model').innerText = modelId; switchCustomerTab(2); }
+
+        function renderPositionsForm() {
+            let html = '';
+            for (let i = 0; i < POSITIONS.length; i++) {
+                const pos = POSITIONS[i];
+                html += '<div class="bg-black/40 border border-brand-gold/20 rounded-xl p-4 space-y-3"><h4 class="font-semibold text-brand-gold text-sm"><i class="fa-solid fa-location-dot mr-2"></i>ตำแหน่ง: ' + pos.label + '</h4><div class="grid grid-cols-1 sm:grid-cols-2 gap-4"><div><input type="text" name="text_' + pos.key + '" placeholder="ระบุข้อความ..." class="w-full bg-black/60 border border-brand-gold/30 rounded-lg px-3 py-2 text-sm text-white focus:border-brand-gold"></div><div><input type="file" name="file_' + pos.key + '" accept="image/*" class="w-full text-xs text-gray-300 file:bg-brand-gold file:text-black bg-black/40 border border-brand-gold/30 rounded-lg p-1"></div></div></div>';
+            }
+            document.getElementById('positions-container').innerHTML = html;
+        }
+
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                if (!file) return resolve(null);
+                const reader = new FileReader(); reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result); reader.onerror = error => reject(error);
+            });
+        }
+
+        function customerCancelDraft() { if(confirm('ยกเลิกการทำแบบ?')) { document.getElementById('design-form').reset(); switchCustomerTab(1); } }
+
+        async function submitCustomerDesign(e) {
+            e.preventDefault();
+            const form = e.target;
+            const color = form.querySelector('input[name="shirtColor"]:checked').value;
+            const selectedDecors = Array.from(form.querySelectorAll('input[name="acha_decor"]:checked')).map(cb => cb.value).join(', ');
+            const positionsData = {};
+            for (let i = 0; i < POSITIONS.length; i++) {
+                const pos = POSITIONS[i];
+                const textVal = form.querySelector('input[name="text_' + pos.key + '"]').value;
+                const fileInput = form.querySelector('input[name="file_' + pos.key + '"]');
+                let fileBase64 = null;
+                if (fileInput.files.length > 0) fileBase64 = await fileToBase64(fileInput.files[0]);
+                positionsData[pos.key] = { text: textVal, image: fileBase64 };
+            }
+
+            let agencyTag = null;
+            if (appState.currentUser && appState.currentUser.role === 'agency') agencyTag = appState.currentUser.id; 
+
+            const newOrder = {
+                id: 'ORD-' + Date.now().toString().slice(-6),
+                customerName: appState.currentUser ? appState.currentUser.name : 'ลูกค้าทั่วไป',
+                agencyId: agencyTag,
+                model: appState.selectedModel, color: color, decoration: selectedDecors, positions: positionsData,
+                createdAt: new Date().toLocaleString('th-TH'), adminFinishedDesign: null,
+                status: 'waiting_admin_design', orderSpecs: null, quotation: null, payment: null, adminPaymentImage: null, 
+                productionProgress: { prepare: { done: false, img: null }, dtfPrint: { done: false, img: null }, embBlock: { done: false, img: null }, embroidery: { done: false, img: null }, dtfPress: { done: false, img: null }, shipping: { done: false, img: null } }
+            };
+            
+            await saveOrderToCloud(newOrder);
+            await fetchCloudOrders();
+            form.reset(); switchCustomerTab(3);
+        }
+
+        async function renderCustomerPages() {
+            await fetchCloudOrders();
+            const reviewContainer = document.getElementById('customer-review-content');
+            const paymentContainer = document.getElementById('customer-payment-content');
+            const statusContainer = document.getElementById('customer-status-content');
+            const dbContainer = document.getElementById('customer-database-list');
+            const displayAreaQR = document.getElementById('customerPaymentDisplayArea');
+            displayAreaQR.classList.add('hidden');
+
+            let myOrders = [];
+            if (appState.currentUser) {
+                myOrders = appState.orders.filter(o => {
+                    if (appState.currentUser.role === 'agency') return o.agencyId === appState.currentUser.id;
+                    return o.customerName === appState.currentUser.name && !o.agencyId;
+                });
+            }
+
+            if (dbContainer) {
+                if (myOrders.length === 0) {
+                    dbContainer.innerHTML = '<p class="text-center text-gray-400 py-8">ยังไม่มีประวัติการสั่งซื้อ</p>';
+                } else {
+                    let dbHtml = '';
+                    myOrders.forEach(o => {
+                        dbHtml += `<div class="bg-black/50 border border-brand-gold/30 rounded-2xl p-4 shadow flex justify-between items-center mb-3">
+                            <div><h3 class="text-white font-bold">#${o.id}</h3><p class="text-xs text-gray-400 mt-1">รุ่น: ${o.model} | สี: ${o.color}</p></div>
+                            <span class="px-3 py-1 text-xs bg-brand-darkRed text-brand-gold rounded-full border border-brand-gold/40">${o.status}</span>
+                        </div>`;
+                    });
+                    dbContainer.innerHTML = dbHtml;
+                }
+            }
+
+            if (myOrders.length === 0) {
+                const empty = '<p class="text-center text-gray-400 py-8">ยังไม่มีคำสั่งซื้อ กรุณาสั่งทำแบบที่หน้า 1 และ 2 ก่อน</p>';
+                reviewContainer.innerHTML = paymentContainer.innerHTML = statusContainer.innerHTML = empty;
+                return;
+            }
+
+            const activeOrder = myOrders[0];
+
+            if (activeOrder.status === 'cancelled') {
+                const cancelHTML = '<div class="text-center py-10 bg-red-950/40 rounded-2xl border border-dashed border-red-500/50"><i class="fa-solid fa-circle-xmark text-5xl text-red-500 mb-4"></i><p class="text-white font-bold text-xl mb-2">ออเดอร์ถูกยกเลิก</p><p class="text-sm text-gray-300 mb-6">คำสั่งซื้อ #' + activeOrder.id + ' ถูกยกเลิกโดยแอดมิน<br>กรุณากลับไปที่หน้า 1 เพื่อเริ่มทำแบบใหม่</p></div>';
+                reviewContainer.innerHTML = paymentContainer.innerHTML = statusContainer.innerHTML = cancelHTML;
+                return; 
+            }
+
+            if (!activeOrder.adminFinishedDesign) { reviewContainer.innerHTML = '<div class="text-center py-10 bg-black/40 rounded-2xl border border-dashed border-brand-gold/30"><i class="fa-solid fa-hourglass-half text-4xl text-brand-gold mb-3 animate-spin"></i><p class="text-white font-medium text-lg">รอดำเนินการอัพโหลดรูปเวลาแอดมินทำแบบเสร็จ...</p></div>'; } 
+            else { reviewContainer.innerHTML = '<div class="space-y-6"><div class="bg-black/50 border border-brand-gold/30 rounded-2xl p-6"><img src="' + activeOrder.adminFinishedDesign.image + '" class="w-full h-64 object-contain mb-4 rounded-xl border border-brand-gold/40"><span class="px-3 py-1 bg-brand-gold/20 text-brand-gold rounded-full text-xs">แบบเสร็จจากแอดมิน</span><h3 class="text-xl font-bold text-white mt-2">คำสั่งซื้อ #' + activeOrder.id + '</h3><p class="text-sm text-gray-300"><strong>หมายเหตุ:</strong> ' + (activeOrder.adminFinishedDesign.notes || '-') + '</p></div></div>'; }
+            
+            if (!activeOrder.quotation) { paymentContainer.innerHTML = '<div class="text-center py-10 bg-black/40 rounded-2xl border border-dashed border-brand-gold/30"><i class="fa-solid fa-file-invoice-dollar text-4xl text-brand-gold mb-3"></i><p class="text-white font-medium text-lg">รอแอดมินคำนวณราคาและออกใบงาน...</p></div>'; } 
+            else {
+                const q = activeOrder.quotation; const deposit50 = q.totalPrice / 2;
+                paymentContainer.innerHTML = '<div class="space-y-6"><div class="bg-black/50 border border-brand-gold/30 rounded-2xl p-6 space-y-4"><h3 class="text-xl font-bold text-white border-b border-brand-gold/20 pb-3 flex justify-between"><span>สรุปยอดชำระเงิน</span><span class="text-brand-gold text-sm">#' + activeOrder.id + '</span></h3><div class="grid grid-cols-2 gap-4 text-sm"><p class="text-gray-300">ตัวละ: <strong class="text-white">' + q.pricePerPiece + '</strong> บ.</p><p class="text-gray-300">จำนวน: <strong class="text-white">' + q.quantity + '</strong> ตัว</p><p class="text-gray-300">ค่าบล็อก: <strong class="text-white">' + q.blockFee + '</strong> บ.</p><p class="text-gray-300">ค่าส่ง: <strong class="text-white">' + q.shippingFee + '</strong> บ.</p></div><div class="bg-brand-darkRed/30 border border-brand-gold/40 rounded-xl p-4 flex justify-between items-center text-lg font-bold"><span class="text-brand-gold">ราคาเต็ม:</span><span class="text-white">' + q.totalPrice.toLocaleString() + ' บาท</span></div></div></div>';
+                if (activeOrder.adminPaymentImage) { displayAreaQR.classList.remove('hidden'); document.getElementById('customerViewAdminImage').src = activeOrder.adminPaymentImage; }
+            }
+
+            let prodHTML = '<div class="space-y-6"><div class="border-b border-brand-gold/20 pb-4"><h3 class="text-xl font-bold text-white">คำสั่งซื้อ #' + activeOrder.id + '</h3><p class="text-xs text-gray-400">สถานะ: <span class="text-brand-gold uppercase">' + activeOrder.status + '</span></p></div><div class="space-y-4">';
+            for (let i = 0; i < PRODUCTION_STAGES.length; i++) {
+                const stage = PRODUCTION_STAGES[i]; const stageData = activeOrder.productionProgress[stage.key];
+                const isDone = stageData && stageData.done; const img = stageData && stageData.img;
+                prodHTML += '<div class="bg-black/50 border ' + (isDone ? 'border-emerald-500' : 'border-brand-gold/20') + ' rounded-2xl p-4 flex items-center justify-between"><div class="flex items-center space-x-3"><div class="w-8 h-8 rounded-full ' + (isDone ? 'bg-emerald-500' : 'bg-brand-charcoal text-brand-gold border border-brand-gold') + ' flex items-center justify-center font-bold text-sm">' + (isDone ? '<i class="fa-solid fa-check text-black"></i>' : (i + 1)) + '</div><span class="text-white font-medium text-sm">' + stage.label + '</span></div>';
+                if (img) prodHTML += '<img src="' + img + '" class="w-12 h-12 object-cover rounded-lg border border-gray-600">'; prodHTML += '</div>';
+            }
+            prodHTML += '</div></div>'; statusContainer.innerHTML = prodHTML;
+        }
+
+        async function renderAdminPages() {
+            await fetchCloudOrders();
+            const activeOrders = appState.orders.filter(o => {
+                if (o.status === 'cancelled') return false;
+                if (appState.currentUser.role === 'admin_agency') return o.agencyId;
+                return true;
+            });
+
+            const queueList = document.getElementById('admin-queue-list');
+            if (activeOrders.length === 0) {
+                queueList.innerHTML = '<p class="text-center text-gray-400 py-10">ยังไม่มีข้อมูลในความรับผิดชอบ</p>';
+            } else {
+                let html = '';
+                activeOrders.forEach(order => {
+                    const posKeys = Object.keys(order.positions || {});
+                    const decorText = order.decoration ? (' | ตกแต่ง: <span class="text-white">' + order.decoration + '</span>') : '';
+                    const agencyBadge = order.agencyId ? `<span class="bg-blue-900 text-blue-200 text-xs px-2 py-1 rounded ml-2 shadow">จากตัวแทน: ${order.agencyId}</span>` : `<span class="bg-gray-700 text-gray-300 text-xs px-2 py-1 rounded ml-2 shadow">ลูกค้าทั่วไป</span>`;
+
+                    html += '<div class="bg-brand-charcoal border border-brand-gold/30 rounded-2xl p-6 mb-4"><div class="flex justify-between items-center border-b border-brand-gold/20 pb-2 mb-4"><div><h3 class="text-white font-bold text-lg">#' + order.id + ' - ' + order.customerName + agencyBadge + '</h3><p class="text-xs text-gray-400 mt-1">รุ่น: ' + order.model + ' | สี: ' + order.color + decorText + '</p></div><div class="flex items-center gap-2"><span class="px-3 py-1 text-xs bg-brand-darkRed text-brand-gold rounded-full border border-brand-gold/40">' + order.status + '</span><button onclick="cancelOrder(\'' + order.id + '\')" class="px-2 py-1 text-xs bg-red-600 text-white rounded-lg hover:bg-red-700 transition">ยกเลิก</button></div></div><div class="grid grid-cols-2 md:grid-cols-5 gap-3">';
+                    posKeys.forEach(key => {
+                        const pos = order.positions[key];
+                        let foundPos = POSITIONS.find(p => p.key === key);
+                        html += '<div class="bg-black/50 p-2 border border-brand-gold/20 rounded-lg"><p class="text-xs text-brand-gold font-bold mb-1">' + (foundPos ? foundPos.label : key) + '</p><p class="text-xs text-gray-300 truncate">' + (pos.text || '-') + '</p>';
+                        if (pos.image) { html += '<img src="' + pos.image + '" class="h-16 w-full object-cover mt-2 rounded">'; }
+                        html += '</div>';
+                    });
+                    html += '</div></div>';
+                });
+                queueList.innerHTML = html;
+            }
+
+            let optionsHTML = '<option value="">-- เลือกคำสั่งซื้อ --</option>';
+            activeOrders.forEach(o => { optionsHTML += `<option value="${o.id}">#${o.id} (${o.customerName})</option>`; });
+            document.getElementById('admin-select-order').innerHTML = optionsHTML;
+
+            let financeHTML = '';
+            if (activeOrders.length === 0) { financeHTML = '<p class="text-center text-gray-400">ยังไม่มีข้อมูล</p>'; } 
+            else {
+                activeOrders.forEach(order => {
+                    financeHTML += '<div class="bg-brand-charcoal border border-brand-gold/30 rounded-2xl p-6 mb-4"><div class="flex justify-between items-center border-b border-brand-gold/20 pb-2 mb-4"><h3 class="text-white font-bold">Order #' + order.id + '</h3><span class="text-xs text-brand-gold">' + order.status + '</span></div>';
+                    financeHTML += '<form onsubmit="submitAdminQuotation(event, \'' + order.id + '\')" class="grid grid-cols-2 md:grid-cols-4 gap-3"><input type="number" name="pricePerPiece" required placeholder="ราคาตัวละ" class="bg-black/60 border border-brand-gold/30 rounded-lg px-3 py-2 text-white text-sm"><input type="number" name="quantity" required placeholder="จำนวน" class="bg-black/60 border border-brand-gold/30 rounded-lg px-3 py-2 text-white text-sm"><input type="number" name="blockFee" required value="0" class="bg-black/60 border border-brand-gold/30 rounded-lg px-3 py-2 text-white text-sm"><input type="number" name="shippingFee" required value="100" class="bg-black/60 border border-brand-gold/30 rounded-lg px-3 py-2 text-white text-sm"><button type="submit" class="col-span-2 md:col-span-4 gold-btn-gradient text-black font-bold py-2 rounded-lg text-sm">คำนวณและส่งแจ้งยอด</button></form><div class="mt-4 p-3 bg-black/40 rounded-xl border border-brand-gold/50"><label class="block text-xs text-brand-gold font-bold mb-2">อัปโหลดบิล/QR Code</label><div class="flex flex-col sm:flex-row gap-2"><input type="file" id="adminQR_' + order.id + '" accept="image/*" class="w-full text-xs text-white bg-black/50 border border-brand-gold/30 rounded-lg p-1"><button onclick="adminUploadPaymentImage(\'' + order.id + '\')" class="gold-btn-gradient text-black font-bold px-4 py-2 rounded-lg text-xs whitespace-nowrap">ส่ง QR ให้ลูกค้า</button></div>';
+                    if (order.adminPaymentImage) { financeHTML += '<div class="mt-2"><span class="text-xs text-gray-400">QR ล่าสุด:</span><img src="' + order.adminPaymentImage + '" class="h-16 rounded mt-1 border border-brand-gold"></div>'; }
+                    financeHTML += '</div></div>';
+                });
+            }
+            document.getElementById('admin-finance-list').innerHTML = financeHTML;
+        }
+
+        async function cancelOrder(orderId) { 
+            if(confirm('ยกเลิกออเดอร์นี้?')) { 
+                const o = appState.orders.find(x => x.id === orderId); 
+                if(o) { 
+                    o.status = 'cancelled'; 
+                    await saveOrderToCloud(o); 
+                    showToast('ยกเลิกเรียบร้อย', 'success'); 
+                    renderAdminPages(); 
+                } 
+            } 
+        }
+
+        async function adminUploadFinishedDesign(e) { 
+            e.preventDefault(); 
+            const oId = document.getElementById('admin-select-order').value; 
+            const file = document.getElementById('admin-finished-img').files[0]; 
+            const notes = document.getElementById('admin-design-notes').value; 
+            if(oId && file) { 
+                const o = appState.orders.find(x => x.id === oId); 
+                if(o) { 
+                    o.adminFinishedDesign = { image: await fileToBase64(file), notes: notes }; 
+                    o.status = 'customer_reviewing'; 
+                    await saveOrderToCloud(o); 
+                    showToast('ส่งแบบเรียบร้อย!', 'success'); 
+                    switchAdminTab(1); 
+                } 
+            } 
+        }
+
+        async function submitAdminQuotation(e, orderId) { 
+            e.preventDefault(); 
+            const f = e.target; 
+            const q = parseInt(f.querySelector('[name="quantity"]').value); 
+            const p = parseFloat(f.querySelector('[name="pricePerPiece"]').value); 
+            const b = parseFloat(f.querySelector('[name="blockFee"]').value); 
+            const s = parseFloat(f.querySelector('[name="shippingFee"]').value); 
+            const o = appState.orders.find(x => x.id === orderId); 
+            if (o) { 
+                o.quotation = { quantity: q, pricePerPiece: p, blockFee: b, shippingFee: s, totalPrice: (p*q)+b+s }; 
+                o.status = 'waiting_payment'; 
+                await saveOrderToCloud(o); 
+                showToast('แจ้งยอดแล้ว!', 'success'); 
+                renderAdminPages(); 
+            } 
+        }
+
+        async function adminUploadPaymentImage(orderId) { 
+            const f = document.getElementById('adminQR_' + orderId); 
+            if (f.files.length && f.files[0]) { 
+                const o = appState.orders.find(x => x.id === orderId); 
+                if(o) { 
+                    o.adminPaymentImage = await fileToBase64(f.files[0]); 
+                    await saveOrderToCloud(o); 
+                    showToast('ส่งรูปให้ลูกค้าสำเร็จ', 'success'); 
+                    renderAdminPages(); 
+                } 
+            } 
+        }
+    </script>
+</body>
+</html>
