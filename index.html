@@ -297,6 +297,23 @@
             }
         }
 
+        async function deleteOrderFromCloud(orderId) {
+            try {
+                const { error } = await supabaseClient.from('orders').delete().eq('id', orderId);
+                if (error) {
+                    showToast('ลบข้อมูลไม่สำเร็จ: ' + error.message, 'error');
+                    return false;
+                }
+                showToast('ล้างข้อมูลออเดอร์เรียบร้อยแล้ว!', 'success');
+                await fetchCloudOrders();
+                renderAdminPages();
+                return true;
+            } catch (err) {
+                console.error('ลบข้อมูลล้มเหลว', err);
+                return false;
+            }
+        }
+
         function showToast(message, type) {
             if (!type) type = 'success';
             const container = document.getElementById('toast-container'); const toast = document.createElement('div');
@@ -984,10 +1001,10 @@
             salesReportHTML += `</tbody></table></div></div>`;
             document.getElementById('admin-reports-content').innerHTML = salesReportHTML;
 
-            // หน้า 6: ฐานข้อมูลลูกค้าทั้งหมดของแอดมิน (Admin Master Database - แสดงแบบที่ลูกค้าตกลงด้วย)
+            // หน้า 6: ฐานข้อมูลลูกค้าทั้งหมดของแอดมิน (เพิ่มปุ่ม "กดยกเลิกและล้างข้อมูลออเดอร์นี้")
             const masterDbContainer = document.getElementById('admin-database-list');
             if (masterDbContainer) {
-                const allOrders = appState.orders.filter(o => o.status !== 'cancelled');
+                const allOrders = appState.orders;
                 if (allOrders.length === 0) {
                     masterDbContainer.innerHTML = '<p class="text-center text-gray-400 py-10">ยังไม่มีประวัติคำสั่งซื้อในระบบ</p>';
                 } else {
@@ -1005,7 +1022,12 @@
                                     <h3 class="text-white font-bold text-lg">Order #${o.id} - ${o.customerName}</h3>
                                     <p class="text-xs text-gray-400">วันที่สั่ง: ${o.createdAt} ${o.agencyId ? '| ตัวแทน: ' + o.agencyId : '| ลูกค้าทั่วไป'}</p>
                                 </div>
-                                <span class="px-3 py-1 text-xs bg-brand-darkRed text-brand-gold rounded-full border border-brand-gold/40">${o.status}</span>
+                                <div class="flex items-center gap-2">
+                                    <span class="px-3 py-1 text-xs bg-brand-darkRed text-brand-gold rounded-full border border-brand-gold/40">${o.status}</span>
+                                    <button onclick="confirmAndDeleteOrder('${o.id}')" class="px-3 py-1 bg-red-700 hover:bg-red-800 text-white font-bold rounded-lg text-xs shadow flex items-center space-x-1 transition">
+                                        <i class="fa-solid fa-trash-can"></i><span>กดยกเลิกและล้างข้อมูล</span>
+                                    </button>
+                                </div>
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                                 <div class="space-y-1">
@@ -1028,6 +1050,12 @@
                     });
                     masterDbContainer.innerHTML = masterHtml;
                 }
+            }
+        }
+
+        async function confirmAndDeleteOrder(orderId) {
+            if (confirm(`คุณต้องการยกเลิกและล้างข้อมูลออเดอร์ #${orderId} ออกจากระบบอย่างถาวรใช่หรือไม่?`)) {
+                await deleteOrderFromCloud(orderId);
             }
         }
 
