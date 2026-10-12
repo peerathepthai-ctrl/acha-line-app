@@ -203,8 +203,8 @@
     <script>
         // ======================= DATA & SETUP =======================
         // URL/KEY เดิมของคุณพีระที่เชื่อม Supabase (อย่าลืมใส่ของจริงตอนนำไปใช้)
-        const SUPABASE_URL = 'https://YOUR_SUPABASE_PROJECT.supabase.co'; 
-        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; 
+        const SUPABASE_URL = 'https://edvwrxuatrswgljygxhn.supabase.co'; 
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkdndyeHVhdHJzd2dsanlneGhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE2Mjg2NTIsImV4cCI6MjEwNzIwNDY1Mn0.e4O8IJ5UWqUv8MoIRH0NlBZz9gwiVeuHu2uhtHelzYM'; 
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let savedOrders = [];
@@ -228,8 +228,25 @@
         ];
 
         let appState = { currentUser: null, selectedModel: 'A1', orders: savedOrders };
-        function saveState() { localStorage.setItem('acha_orders', JSON.stringify(appState.orders)); }
-
+         async function saveState() {
+    localStorage.setItem('acha_orders', JSON.stringify(appState.orders)); // เซฟลงเครื่องสำรอง
+    try {
+        // บันทึกทับแถวที่มี id เท่ากับ 1 เสมอ
+        const { error } = await supabaseClient
+            .from('acha_store')
+            .upsert({ id: 1, orders_data: appState.orders }, { onConflict: 'id' });
+        
+        if (error) {
+            console.error('Supabase Error:', error);
+            showToast('บันทึกลงคลาวด์ไม่สำเร็จ: ' + error.message, 'error');
+        } else {
+            console.log('บันทึกขึ้นคลาวด์สำเร็จ');
+        }
+    } catch (err) {
+        console.error('อัปเดตขึ้นคลาวด์ล้มเหลว', err);
+        showToast('เชื่อมต่อคลาวด์ล้มเหลว แต่บันทึกลงเครื่องแล้ว', 'error');
+    }
+}
         function showToast(message, type) {
             if (!type) type = 'success';
             const container = document.getElementById('toast-container'); const toast = document.createElement('div');
