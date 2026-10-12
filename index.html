@@ -165,35 +165,35 @@
         </div>
     </main>
 
-    <!-- Login Modal -->
-    <div id="login-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-brand-charcoal border-2 border-brand-gold rounded-3xl max-w-md w-full p-6 shadow-2xl relative">
-            <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-gray-400 hover:text-brand-gold text-xl"><i class="fa-solid fa-xmark"></i></button>
-            <div class="text-center mb-6">
-                <div class="w-16 h-16 rounded-full bg-brand-gold/10 border-2 border-brand-gold flex items-center justify-center mx-auto mb-3 overflow-hidden">
-                    <img src="logo.jpg" alt="Logo" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/100x100/800000/D4AF37?text=ACHA'">
-                </div>
-                <h3 class="text-2xl font-bold gold-gradient lordcops-font">เข้าสู่ระบบ (LOGIN)</h3>
+ <!-- Login Modal -->
+<div id="login-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 hidden" style="pointer-events: auto;">
+    <div class="bg-brand-charcoal border-2 border-brand-gold rounded-3xl max-w-md w-full p-6 shadow-2xl relative" style="pointer-events: auto;">
+        <button type="button" onclick="closeLoginModal()" class="absolute top-4 right-4 text-gray-400 hover:text-brand-gold text-2xl p-2 z-10"><i class="fa-solid fa-xmark"></i></button>
+        <div class="text-center mb-6">
+            <div class="w-16 h-16 rounded-full bg-brand-gold/10 border-2 border-brand-gold flex items-center justify-center mx-auto mb-3 overflow-hidden">
+                <img src="logo.jpg" alt="Logo" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/100x100/800000/D4AF37?text=ACHA'">
             </div>
-            <div class="flex border-b border-brand-gold/30 mb-6">
-                <button onclick="switchLoginTab('customer')" id="login-tab-cust" class="flex-1 pb-3 font-semibold text-brand-gold border-b-2 border-brand-gold transition"><i class="fa-brands fa-line mr-2"></i>ลูกค้าทั่วไป</button>
-                <button onclick="switchLoginTab('admin')" id="login-tab-adm" class="flex-1 pb-3 font-semibold text-gray-400 hover:text-brand-gold transition"><i class="fa-solid fa-user-shield mr-2"></i>เจ้าหน้าที่/ตัวแทน</button>
-            </div>
-            <div id="login-section-customer" class="space-y-4">
-                <button onclick="simulateLineLogin()" class="w-full bg-[#06C755] hover:bg-[#05b34c] text-white font-bold py-3.5 rounded-xl flex justify-center items-center space-x-2">
-                    <i class="fa-brands fa-line text-xl"></i><span>เข้าสู่ระบบลูกค้า (LINE)</span>
-                </button>
-            </div>
-            <div id="login-section-admin" class="space-y-4 hidden">
-                <form onsubmit="handleAdminLogin(event)" class="space-y-4">
-                    <p class="text-xs text-brand-gold mb-2 text-center">ID ตัวแทน: YAG_1, BAG_2, AAG_3 | ID Admin: ACHA, ACHA2</p>
-                    <input type="text" id="admin-username" required placeholder="รหัสผู้ใช้งาน (ID)" class="w-full bg-black/50 border border-brand-gold/40 rounded-xl px-4 py-3 text-white">
-                    <input type="password" id="admin-password" required placeholder="รหัสผ่าน (Password)" class="w-full bg-black/50 border border-brand-gold/40 rounded-xl px-4 py-3 text-white">
-                    <button type="submit" class="w-full gold-btn-gradient text-black font-bold py-3.5 rounded-xl"><i class="fa-solid fa-right-to-bracket mr-2"></i>เข้าสู่ระบบ</button>
-                </form>
-            </div>
+            <h3 class="text-2xl font-bold gold-gradient lordcops-font">เข้าสู่ระบบ (LOGIN)</h3>
+        </div>
+        <div class="flex border-b border-brand-gold/30 mb-6">
+            <button type="button" onclick="switchLoginTab('customer')" id="login-tab-cust" class="flex-1 pb-3 font-semibold text-brand-gold border-b-2 border-brand-gold transition"><i class="fa-brands fa-line mr-2"></i>ลูกค้าทั่วไป</button>
+            <button type="button" onclick="switchLoginTab('admin')" id="login-tab-adm" class="flex-1 pb-3 font-semibold text-gray-400 hover:text-brand-gold transition"><i class="fa-solid fa-user-shield mr-2"></i>เจ้าหน้าที่/ตัวแทน</button>
+        </div>
+        <div id="login-section-customer" class="space-y-4">
+            <button type="button" onclick="simulateLineLogin()" class="w-full bg-[#06C755] hover:bg-[#05b34c] text-white font-bold py-3.5 rounded-xl flex justify-center items-center space-x-2 shadow-lg cursor-pointer">
+                <i class="fa-brands fa-line text-xl"></i><span>เข้าสู่ระบบลูกค้า (LINE)</span>
+            </button>
+        </div>
+        <div id="login-section-admin" class="space-y-4 hidden">
+            <form onsubmit="handleAdminLogin(event)" class="space-y-4">
+                <p class="text-xs text-brand-gold mb-2 text-center">ID ตัวแทน: YAG_1, BAG_2, AAG_3 | ID Admin: ACHA, ACHA2</p>
+                <input type="text" id="admin-username" required placeholder="รหัสผู้ใช้งาน (ID)" class="w-full bg-black/50 border border-brand-gold/40 rounded-xl px-4 py-3 text-white">
+                <input type="password" id="admin-password" required placeholder="รหัสผ่าน (Password)" class="w-full bg-black/50 border border-brand-gold/40 rounded-xl px-4 py-3 text-white">
+                <button type="submit" class="w-full gold-btn-gradient text-black font-bold py-3.5 rounded-xl shadow-lg cursor-pointer"><i class="fa-solid fa-right-to-bracket mr-2"></i>เข้าสู่ระบบ</button>
+            </form>
         </div>
     </div>
+</div>
 
     <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col space-y-3 pointer-events-none"></div>
 
@@ -347,8 +347,17 @@
             setupRealtimeListener();
         };
 
-        function openLoginModal() { document.getElementById('login-modal').classList.remove('hidden'); }
-        function closeLoginModal() { document.getElementById('login-modal').classList.add('hidden'); }
+       function openLoginModal() { 
+    const modal = document.getElementById('login-modal');
+    modal.classList.remove('hidden'); 
+    modal.style.display = 'flex';
+}
+
+function closeLoginModal() { 
+    const modal = document.getElementById('login-modal');
+    modal.classList.add('hidden'); 
+    modal.style.display = 'none';
+}
         
         function switchLoginTab(type) {
             const custSec = document.getElementById('login-section-customer'); const admSec = document.getElementById('login-section-admin');
