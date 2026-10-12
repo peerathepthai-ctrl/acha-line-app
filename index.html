@@ -99,7 +99,7 @@
                 </div>
                 <form id="design-form" onsubmit="submitCustomerDesign(event)" class="bg-brand-charcoal/80 border border-brand-gold/30 rounded-2xl p-6 sm:p-8 shadow-xl space-y-8">
                     <div>
-                        <label class="block text-brand-gold font-semibold mb-3">1. เลือกสีเสื้อ</label>
+                        <label class="block text-brand-gold font-semibold mb-3">เลือกสีเสื้อ</label>
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
                             <label class="cursor-pointer border-2 border-brand-gold/40 rounded-xl p-4 flex items-center space-x-3 hover:border-brand-gold bg-black/40 has-[:checked]:border-brand-gold has-[:checked]:bg-brand-darkRed/30"><input type="radio" name="shirtColor" value="กรม (Navy)" required class="text-brand-gold"><span class="w-6 h-6 rounded-full bg-blue-950 border border-white/20 inline-block"></span><span>สีกรม (Navy)</span></label>
                             <label class="cursor-pointer border-2 border-brand-gold/40 rounded-xl p-4 flex items-center space-x-3 hover:border-brand-gold bg-black/40 has-[:checked]:border-brand-gold has-[:checked]:bg-brand-darkRed/30"><input type="radio" name="shirtColor" value="ดำ (Black)" required class="text-brand-gold"><span class="w-6 h-6 rounded-full bg-black border border-white/20 inline-block"></span><span>สีดำ (Black)</span></label>
@@ -120,7 +120,10 @@
             </div>
 
             <!-- Page 3 -->
-            <div id="cust-page-3" class="cust-page space-y-6 hidden"><div class="border-b border-brand-gold/30 pb-4 mb-6 flex justify-between items-center"><h2 class="text-2xl font-bold text-white"><i class="fa-solid fa-eye text-brand-gold mr-2"></i>ตรวจสอบแบบ (ล่าสุด)</h2></div><div id="customer-review-content" class="bg-brand-charcoal/80 border border-brand-gold/30 rounded-2xl p-6 shadow-xl space-y-6"></div></div>
+            <div id="cust-page-3" class="cust-page space-y-6 hidden">
+                <div class="border-b border-brand-gold/30 pb-4 mb-6 flex justify-between items-center"><h2 class="text-2xl font-bold text-white"><i class="fa-solid fa-eye text-brand-gold mr-2"></i>ตรวจสอบแบบ (ล่าสุด)</h2></div>
+                <div id="customer-review-content" class="bg-brand-charcoal/80 border border-brand-gold/30 rounded-2xl p-6 shadow-xl space-y-6"></div>
+            </div>
 
             <!-- Page 4 -->
             <div id="cust-page-4" class="cust-page space-y-6 hidden">
@@ -139,7 +142,7 @@
         <!-- Admin View -->
         <div id="view-admin" class="view-section hidden">
             <div class="bg-brand-charcoal/90 border border-brand-gold/30 rounded-2xl p-2 mb-8 flex flex-wrap justify-center gap-2 shadow-lg">
-                <button onclick="switchAdminTab(1)" class="admin-tab px-4 py-2.5 rounded-xl text-sm font-medium transition flex items-center space-x-2 bg-brand-darkRed text-brand-gold border border-brand-gold/40 shadow" data-tab="1"><i class="fa-solid fa-inbox"></i><span>1. ข้อมูลลูกค้า</span></button>
+                <button onclick="switchAdminTab(1)" class="admin-tab px-4 py-2.5 rounded-xl text-sm font-medium transition flex items-center space-x-2 bg-brand-darkRed text-brand-gold border border-brand-gold/40 shadow" data-tab="1"><i class="fa-solid fa-inbox"></i><span>ข้อมูลลูกค้า</span></button>
                 <button onclick="switchAdminTab(2)" class="admin-tab px-4 py-2.5 rounded-xl text-sm font-medium transition text-gray-300 hover:text-brand-gold" data-tab="2"><i class="fa-solid fa-upload"></i><span>2. ส่งแบบเสร็จ</span></button>
                 <button onclick="switchAdminTab(3)" class="admin-tab px-4 py-2.5 rounded-xl text-sm font-medium transition text-gray-300 hover:text-brand-gold" data-tab="3"><i class="fa-solid fa-calculator"></i><span>3. การเงิน</span></button>
                 <button onclick="switchAdminTab(4)" class="admin-tab px-4 py-2.5 rounded-xl text-sm font-medium transition text-gray-300 hover:text-brand-gold" data-tab="4"><i class="fa-solid fa-industry"></i><span>4. ลายผลิต</span></button>
@@ -192,7 +195,6 @@
         const SUPABASE_URL = 'https://edvwrxuatrswgljygxhn.supabase.co'; 
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkdndyeHVhdHJzd2dsanlneGhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE2Mjg2NTIsImV4cCI6MjEwNzIwNDY1Mn0.e4O8IJ5UWqUv8MoIRH0NlBZz9gwiVeuHu2uhtHelzYM'; 
         
-        // ผูกตัวแปรให้เป็น Global เพื่อให้ Console และฟังก์ชันเรียกใช้ได้ชัวร์
         window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         const supabaseClient = window.supabaseClient;
 
@@ -208,7 +210,8 @@
 
         const POSITIONS = [
             { key: 'leftChest', label: 'อกซ้าย' }, { key: 'rightChest', label: 'อกขวา' },
-            { key: 'leftSleeve', label: 'แขนซ้าย' }, { key: 'rightSleeve', label: 'แขนขวา' }, { key: 'back', label: 'หลัง' }
+            { key: 'leftSleeve', label: 'แขนซ้าย' }, { key: 'rightSleeve', label: 'แขนขวา' },
+            { key: 'back', label: 'หลัง' }
         ];
         const PRODUCTION_STAGES = [
             { key: 'prepare', label: 'เตรียมเสื้อ' }, { key: 'dtfPrint', label: 'พิมพ์ DTF' }, { key: 'embBlock', label: 'บล็อคปัก' },
@@ -216,52 +219,38 @@
         ];
 
         async function fetchCloudOrders() {
-    const { data, error } = await supabaseClient
-        .from('orders')
-        .select('*')
-        .order('created_at', { ascending: false });
+            const { data, error } = await supabaseClient
+                .from('orders')
+                .select('*')
+                .order('created_at', { ascending: false });
 
-    if (error) {
-        console.error('[A.CHA] SELECT ERROR:', {
-            code: error.code,
-            message: error.message,
-            details: error.details,
-            hint: error.hint
-        });
+            if (error) {
+                console.error('[A.CHA] SELECT ERROR:', error);
+                showToast('โหลดออเดอร์ไม่สำเร็จ: ' + error.message, 'error');
+                return false;
+            }
 
-        showToast('โหลดออเดอร์ไม่สำเร็จ: ' + error.message, 'error');
-        return false;
-    }
-
-    appState.orders = (data || []).map(item => ({
-        id: item.id,
-        customerName: item.customer_name,
-        agencyId: item.agency_id,
-        model: item.model,
-        color: item.color,
-        decoration: item.decoration,
-        positions: item.positions || {},
-        createdAt: item.created_at,
-        adminFinishedDesign: item.admin_finished_design,
-        status: item.status,
-        orderSpecs: item.order_specs,
-        quotation: item.quotation,
-        payment: item.payment,
-        adminPaymentImage: item.admin_payment_image,
-        productionSchedule: item.production_schedule,
-        productionProgress: item.production_progress || {}
-    }));
-
-    console.log('[A.CHA] อ่านข้อมูลสำเร็จ', {
-        count: data.length,
-        orders: data.map(o => ({
-            id: o.id,
-            created_at: o.created_at
-        }))
-    });
-
-    return true;
-}
+            appState.orders = (data || []).map(item => ({
+                id: item.id,
+                customerName: item.customer_name,
+                agencyId: item.agency_id,
+                model: item.model,
+                color: item.color,
+                decoration: item.decoration,
+                positions: item.positions || {},
+                createdAt: item.created_at,
+                adminFinishedDesign: item.admin_finished_design,
+                status: item.status,
+                orderSpecs: item.order_specs,
+                quotation: item.quotation,
+                payment: item.payment,
+                adminPaymentImage: item.admin_payment_image,
+                productionSchedule: item.production_schedule,
+                productionProgress: item.production_progress || {},
+                customerResponse: item.customer_response || null
+            }));
+            return true;
+        }
 
         async function saveOrderToCloud(order) {
             try {
@@ -279,6 +268,7 @@
                     payment: order.payment,
                     admin_payment_image: order.adminPaymentImage,
                     production_progress: order.productionProgress,
+                    customer_response: order.customerResponse,
                     created_at: order.createdAt
                 };
                 const { error } = await supabaseClient.from('orders').upsert(payload);
@@ -300,7 +290,6 @@
             container.appendChild(toast); setTimeout(function() { toast.remove(); }, 3000);
         }
 
-        // ระบบ Realtime อัปเดตหน้าจออัตโนมัติเมื่ออีกเครื่องเปลี่ยนข้อมูล
         function setupRealtimeListener() {
             supabaseClient
                 .channel('public:orders')
@@ -482,7 +471,8 @@
                 model: appState.selectedModel, color: color, decoration: selectedDecors, positions: positionsData,
                 createdAt: new Date().toLocaleString('th-TH'), adminFinishedDesign: null,
                 status: 'waiting_admin_design', orderSpecs: null, quotation: null, payment: null, adminPaymentImage: null, 
-                productionProgress: { prepare: { done: false, img: null }, dtfPrint: { done: false, img: null }, embBlock: { done: false, img: null }, embroidery: { done: false, img: null }, dtfPress: { done: false, img: null }, shipping: { done: false, img: null } }
+                productionProgress: { prepare: { done: false, img: null }, dtfPrint: { done: false, img: null }, embBlock: { done: false, img: null }, embroidery: { done: false, img: null }, dtfPress: { done: false, img: null }, shipping: { done: false, img: null } },
+                customerResponse: null
             };
             
             await saveOrderToCloud(newOrder);
@@ -536,12 +526,74 @@
                 return; 
             }
 
-            if (!activeOrder.adminFinishedDesign) { reviewContainer.innerHTML = '<div class="text-center py-10 bg-black/40 rounded-2xl border border-dashed border-brand-gold/30"><i class="fa-solid fa-hourglass-half text-4xl text-brand-gold mb-3 animate-spin"></i><p class="text-white font-medium text-lg">รอดำเนินการอัพโหลดรูปเวลาแอดมินทำแบบเสร็จ...</p></div>'; } 
-            else { reviewContainer.innerHTML = '<div class="space-y-6"><div class="bg-black/50 border border-brand-gold/30 rounded-2xl p-6"><img src="' + activeOrder.adminFinishedDesign.image + '" class="w-full h-64 object-contain mb-4 rounded-xl border border-brand-gold/40"><span class="px-3 py-1 bg-brand-gold/20 text-brand-gold rounded-full text-xs">แบบเสร็จจากแอดมิน</span><h3 class="text-xl font-bold text-white mt-2">คำสั่งซื้อ #' + activeOrder.id + '</h3><p class="text-sm text-gray-300"><strong>หมายเหตุ:</strong> ' + (activeOrder.adminFinishedDesign.notes || '-') + '</p></div></div>'; }
+            if (!activeOrder.adminFinishedDesign) { 
+                reviewContainer.innerHTML = '<div class="text-center py-10 bg-black/40 rounded-2xl border border-dashed border-brand-gold/30"><i class="fa-solid fa-hourglass-half text-4xl text-brand-gold mb-3 animate-spin"></i><p class="text-white font-medium text-lg">รอดำเนินการอัพโหลดรูปเวลาแอดมินทำแบบเสร็จ...</p></div>'; 
+            } else { 
+                let responseHTML = '';
+                if (activeOrder.customerResponse) {
+                    if (activeOrder.customerResponse.action === 'accept') {
+                        responseHTML = '<div class="p-4 bg-emerald-950/60 border border-emerald-500/50 rounded-xl text-center"><i class="fa-solid fa-circle-check text-emerald-400 text-2xl mb-2"></i><p class="text-white font-bold">คุณได้กด "เอาแบบนี้" เรียบร้อยแล้ว (รอแอดมินตรวจสอบ/สรุปยอด)</p></div>';
+                    } else if (activeOrder.customerResponse.action === 'revise') {
+                        responseHTML = '<div class="p-4 bg-amber-950/60 border border-amber-500/50 rounded-xl text-center"><i class="fa-solid fa-triangle-exclamation text-amber-400 text-2xl mb-2"></i><p class="text-white font-bold">คุณได้แจ้งแก้ไขแบบแล้ว: <span class="text-gray-300 font-normal">' + activeOrder.customerResponse.note + '</span></p></div>';
+                    }
+                } else {
+                    responseHTML = `
+                    <div class="space-y-4 pt-4 border-t border-brand-gold/20">
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <button onclick="openAcceptForm()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl shadow-lg flex items-center justify-center space-x-2 transition">
+                                <i class="fa-solid fa-check-circle"></i><span>เอาแบบนี้</span>
+                            </button>
+                            <button onclick="openReviseForm()" class="flex-1 bg-amber-600 hover:bg-amber-500 text-white font-bold py-3.5 rounded-xl shadow-lg flex items-center justify-center space-x-2 transition">
+                                <i class="fa-solid fa-pen-to-square"></i><span>แก้ไขแบบ</span>
+                            </button>
+                        </div>
+
+                        <!-- ฟอร์มเมื่อกด "เอาแบบนี้" -->
+                        <div id="form-accept-section" class="hidden bg-black/60 border border-emerald-500/50 rounded-2xl p-5 space-y-4">
+                            <h4 class="text-emerald-400 font-bold"><i class="fa-solid fa-clipboard-list mr-2"></i>ระบุไซส์ จำนวน และที่อยู่จัดส่ง</h4>
+                            <form onsubmit="submitAcceptDesign(event, '${activeOrder.id}')" class="space-y-4">
+                                <div>
+                                    <label class="block text-xs text-brand-gold mb-1 font-medium">รายละเอียดไซส์และจำนวน (เช่น ไซส์ S=2, M=5, L=3)</label>
+                                    <textarea name="sizesAndQty" rows="3" required placeholder="ระบุรายละเอียดไซส์และจำนวนเสื้อทั้งหมดที่ต้องการ..." class="w-full bg-black/60 border border-brand-gold/30 rounded-xl p-3 text-white text-sm"></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-brand-gold mb-1 font-medium">รายละเอียดเพิ่มเติม (ถ้ามี)</label>
+                                    <input type="text" name="extraNote" placeholder="ระบุข้อความเพิ่มเติม..." class="w-full bg-black/60 border border-brand-gold/30 rounded-xl px-3 py-2 text-white text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-brand-gold mb-1 font-medium">ที่อยู่สำหรับจัดส่งสินค้า</label>
+                                    <textarea name="shippingAddress" rows="3" required placeholder="บ้านเลขที่, ซอย, ถนน, ตำบล, อำเภอ, จังหวัด, รหัสไปรษณีย์, เบอร์โทรศัพท์ผู้รับ..." class="w-full bg-black/60 border border-brand-gold/30 rounded-xl p-3 text-white text-sm"></textarea>
+                                </div>
+                                <div class="flex justify-end gap-2">
+                                    <button type="button" onclick="document.getElementById('form-accept-section').classList.add('hidden')" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-xs font-semibold">ยกเลิก</button>
+                                    <button type="submit" class="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-xs shadow">ยืนยันเอาแบบนี้</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- ฟอร์มเมื่อกด "แก้ไขแบบ" -->
+                        <div id="form-revise-section" class="hidden bg-black/60 border border-amber-500/50 rounded-2xl p-5 space-y-4">
+                            <h4 class="text-amber-400 font-bold"><i class="fa-solid fa-pen-to-square mr-2"></i>ระบุจุดที่ต้องการแก้ไขเพิ่มเติม</h4>
+                            <form onsubmit="submitReviseDesign(event, '${activeOrder.id}')" class="space-y-4">
+                                <div>
+                                    <label class="block text-xs text-brand-gold mb-1 font-medium">รายละเอียดการแก้ไข</label>
+                                    <textarea name="revisionNote" rows="3" required placeholder="ระบุจุดที่ต้องการให้แอดมินแก้ไข เช่น เปลี่ยนสีตัวอักษร, ขยายโลโก้ตรงอกซ้าย, เปลี่ยนฟอนต์..." class="w-full bg-black/60 border border-brand-gold/30 rounded-xl p-3 text-white text-sm"></textarea>
+                                </div>
+                                <div class="flex justify-end gap-2">
+                                    <button type="button" onclick="document.getElementById('form-revise-section').classList.add('hidden')" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-xs font-semibold">ยกเลิก</button>
+                                    <button type="submit" class="px-6 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-lg text-xs shadow">ส่งคำขอแก้ไข</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>`;
+                }
+
+                reviewContainer.innerHTML = '<div class="space-y-6"><div class="bg-black/50 border border-brand-gold/30 rounded-2xl p-6"><img src="' + activeOrder.adminFinishedDesign.image + '" class="w-full h-64 object-contain mb-4 rounded-xl border border-brand-gold/40"><span class="px-3 py-1 bg-brand-gold/20 text-brand-gold rounded-full text-xs">แบบเสร็จจากแอดมิน</span><h3 class="text-xl font-bold text-white mt-2">คำสั่งซื้อ #' + activeOrder.id + '</h3><p class="text-sm text-gray-300"><strong>หมายเหตุ:</strong> ' + (activeOrder.adminFinishedDesign.notes || '-') + '</p></div>' + responseHTML + '</div>'; 
+            }
             
             if (!activeOrder.quotation) { paymentContainer.innerHTML = '<div class="text-center py-10 bg-black/40 rounded-2xl border border-dashed border-brand-gold/30"><i class="fa-solid fa-file-invoice-dollar text-4xl text-brand-gold mb-3"></i><p class="text-white font-medium text-lg">รอแอดมินคำนวณราคาและออกใบงาน...</p></div>'; } 
             else {
-                const q = activeOrder.quotation; const deposit50 = q.totalPrice / 2;
+                const q = activeOrder.quotation; 
                 paymentContainer.innerHTML = '<div class="space-y-6"><div class="bg-black/50 border border-brand-gold/30 rounded-2xl p-6 space-y-4"><h3 class="text-xl font-bold text-white border-b border-brand-gold/20 pb-3 flex justify-between"><span>สรุปยอดชำระเงิน</span><span class="text-brand-gold text-sm">#' + activeOrder.id + '</span></h3><div class="grid grid-cols-2 gap-4 text-sm"><p class="text-gray-300">ตัวละ: <strong class="text-white">' + q.pricePerPiece + '</strong> บ.</p><p class="text-gray-300">จำนวน: <strong class="text-white">' + q.quantity + '</strong> ตัว</p><p class="text-gray-300">ค่าบล็อก: <strong class="text-white">' + q.blockFee + '</strong> บ.</p><p class="text-gray-300">ค่าส่ง: <strong class="text-white">' + q.shippingFee + '</strong> บ.</p></div><div class="bg-brand-darkRed/30 border border-brand-gold/40 rounded-xl p-4 flex justify-between items-center text-lg font-bold"><span class="text-brand-gold">ราคาเต็ม:</span><span class="text-white">' + q.totalPrice.toLocaleString() + ' บาท</span></div></div></div>';
                 if (activeOrder.adminPaymentImage) { displayAreaQR.classList.remove('hidden'); document.getElementById('customerViewAdminImage').src = activeOrder.adminPaymentImage; }
             }
@@ -554,6 +606,58 @@
                 if (img) prodHTML += '<img src="' + img + '" class="w-12 h-12 object-cover rounded-lg border border-gray-600">'; prodHTML += '</div>';
             }
             prodHTML += '</div></div>'; statusContainer.innerHTML = prodHTML;
+        }
+
+        function openAcceptForm() {
+            document.getElementById('form-accept-section').classList.remove('hidden');
+            document.getElementById('form-revise-section').classList.add('hidden');
+        }
+
+        function openReviseForm() {
+            document.getElementById('form-revise-section').classList.remove('hidden');
+            document.getElementById('form-accept-section').classList.add('hidden');
+        }
+
+        async function submitAcceptDesign(e, orderId) {
+            e.preventDefault();
+            const form = e.target;
+            const sizesAndQty = form.querySelector('[name="sizesAndQty"]').value;
+            const extraNote = form.querySelector('[name="extraNote"]').value;
+            const shippingAddress = form.querySelector('[name="shippingAddress"]').value;
+
+            const order = appState.orders.find(o => o.id === orderId);
+            if (order) {
+                order.customerResponse = {
+                    action: 'accept',
+                    sizesAndQty: sizesAndQty,
+                    extraNote: extraNote,
+                    shippingAddress: shippingAddress,
+                    timestamp: new Date().toLocaleString('th-TH')
+                };
+                order.status = 'customer_accepted';
+                await saveOrderToCloud(order);
+                showToast('บันทึกข้อมูลเรียบร้อย ส่งให้แอดมินออกใบเสนอราคาครับ', 'success');
+                renderCustomerPages();
+            }
+        }
+
+        async function submitReviseDesign(e, orderId) {
+            e.preventDefault();
+            const form = e.target;
+            const revisionNote = form.querySelector('[name="revisionNote"]').value;
+
+            const order = appState.orders.find(o => o.id === orderId);
+            if (order) {
+                order.customerResponse = {
+                    action: 'revise',
+                    note: revisionNote,
+                    timestamp: new Date().toLocaleString('th-TH')
+                };
+                order.status = 'waiting_admin_design';
+                await saveOrderToCloud(order);
+                showToast('ส่งคำขอแก้ไขแบบไปยังแอดมินแล้ว', 'success');
+                renderCustomerPages();
+            }
         }
 
         async function renderAdminPages() {
@@ -574,6 +678,23 @@
                     const decorText = order.decoration ? (' | ตกแต่ง: <span class="text-white">' + order.decoration + '</span>') : '';
                     const agencyBadge = order.agencyId ? `<span class="bg-blue-900 text-blue-200 text-xs px-2 py-1 rounded ml-2 shadow">จากตัวแทน: ${order.agencyId}</span>` : `<span class="bg-gray-700 text-gray-300 text-xs px-2 py-1 rounded ml-2 shadow">ลูกค้าทั่วไป</span>`;
 
+                    let customerResponseInfo = '';
+                    if (order.customerResponse) {
+                        if (order.customerResponse.action === 'accept') {
+                            customerResponseInfo = `<div class="mt-4 p-3 bg-emerald-950/40 border border-emerald-500/40 rounded-xl text-xs space-y-1">
+                                <p class="text-emerald-400 font-bold"><i class="fa-solid fa-check-circle mr-1"></i> ลูกค้ากด "เอาแบบนี้" แล้ว</p>
+                                <p class="text-gray-200"><strong>ไซส์/จำนวน:</strong> ${order.customerResponse.sizesAndQty}</p>
+                                <p class="text-gray-200"><strong>หมายเหตุเพิ่มเติม:</strong> ${order.customerResponse.extraNote || '-'}</p>
+                                <p class="text-gray-200"><strong>ที่อยู่จัดส่ง:</strong> ${order.customerResponse.shippingAddress}</p>
+                            </div>`;
+                        } else if (order.customerResponse.action === 'revise') {
+                            customerResponseInfo = `<div class="mt-4 p-3 bg-amber-950/40 border border-amber-500/40 rounded-xl text-xs space-y-1">
+                                <p class="text-amber-400 font-bold"><i class="fa-solid fa-pen-to-square mr-1"></i> ลูกค้าขอ "แก้ไขแบบ"</p>
+                                <p class="text-gray-200"><strong>รายละเอียดการแก้:</strong> ${order.customerResponse.note}</p>
+                            </div>`;
+                        }
+                    }
+
                     html += '<div class="bg-brand-charcoal border border-brand-gold/30 rounded-2xl p-6 mb-4"><div class="flex justify-between items-center border-b border-brand-gold/20 pb-2 mb-4"><div><h3 class="text-white font-bold text-lg">#' + order.id + ' - ' + order.customerName + agencyBadge + '</h3><p class="text-xs text-gray-400 mt-1">รุ่น: ' + order.model + ' | สี: ' + order.color + decorText + '</p></div><div class="flex items-center gap-2"><span class="px-3 py-1 text-xs bg-brand-darkRed text-brand-gold rounded-full border border-brand-gold/40">' + order.status + '</span><button onclick="cancelOrder(\'' + order.id + '\')" class="px-2 py-1 text-xs bg-red-600 text-white rounded-lg hover:bg-red-700 transition">ยกเลิก</button></div></div><div class="grid grid-cols-2 md:grid-cols-5 gap-3">';
                     posKeys.forEach(key => {
                         const pos = order.positions[key];
@@ -582,7 +703,7 @@
                         if (pos.image) { html += '<img src="' + pos.image + '" class="h-16 w-full object-cover mt-2 rounded">'; }
                         html += '</div>';
                     });
-                    html += '</div></div>';
+                    html += '</div>' + customerResponseInfo + '</div>';
                 });
                 queueList.innerHTML = html;
             }
