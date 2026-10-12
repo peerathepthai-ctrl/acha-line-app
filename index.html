@@ -216,32 +216,52 @@
         ];
 
         async function fetchCloudOrders() {
-            try {
-                const { data, error } = await supabaseClient.from('orders').select('*');
-                if (!error && data) {
-                    appState.orders = data.map(item => ({
-                        id: item.id,
-                        customerName: item.customer_name,
-                        agencyId: item.agency_id,
-                        model: item.model,
-                        color: item.color,
-                        decoration: item.decoration,
-                        positions: item.positions,
-                        createdAt: item.created_at,
-                        adminFinishedDesign: item.admin_finished_design,
-                        status: item.status,
-                        orderSpecs: item.order_specs,
-                        quotation: item.quotation,
-                        payment: item.payment,
-                        adminPaymentImage: item.admin_payment_image,
-                        productionSchedule: item.production_schedule,
-                        productionProgress: item.production_progress || { prepare: { done: false, img: null }, dtfPrint: { done: false, img: null }, embBlock: { done: false, img: null }, embroidery: { done: false, img: null }, dtfPress: { done: false, img: null }, shipping: { done: false, img: null } }
-                    })).reverse();
-                }
-            } catch (err) {
-                console.error('โหลดข้อมูลล้มเหลว', err);
-            }
-        }
+    const { data, error } = await supabaseClient
+        .from('orders')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('[A.CHA] SELECT ERROR:', {
+            code: error.code,
+            message: error.message,
+            details: error.details,
+            hint: error.hint
+        });
+
+        showToast('โหลดออเดอร์ไม่สำเร็จ: ' + error.message, 'error');
+        return false;
+    }
+
+    appState.orders = (data || []).map(item => ({
+        id: item.id,
+        customerName: item.customer_name,
+        agencyId: item.agency_id,
+        model: item.model,
+        color: item.color,
+        decoration: item.decoration,
+        positions: item.positions || {},
+        createdAt: item.created_at,
+        adminFinishedDesign: item.admin_finished_design,
+        status: item.status,
+        orderSpecs: item.order_specs,
+        quotation: item.quotation,
+        payment: item.payment,
+        adminPaymentImage: item.admin_payment_image,
+        productionSchedule: item.production_schedule,
+        productionProgress: item.production_progress || {}
+    }));
+
+    console.log('[A.CHA] อ่านข้อมูลสำเร็จ', {
+        count: data.length,
+        orders: data.map(o => ({
+            id: o.id,
+            created_at: o.created_at
+        }))
+    });
+
+    return true;
+}
 
         async function saveOrderToCloud(order) {
             try {
