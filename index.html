@@ -153,7 +153,7 @@
             <div id="admin-page-1" class="admin-page space-y-6"><div class="border-b border-brand-gold/30 pb-4 mb-6"><h2 class="text-2xl font-bold text-white"><i class="fa-solid fa-inbox text-brand-gold mr-2"></i>คำสั่งซื้อในความรับผิดชอบ</h2></div><div id="admin-queue-list" class="space-y-4"></div></div>
             <div id="admin-page-2" class="admin-page space-y-6 hidden"><div class="border-b border-brand-gold/30 pb-4 mb-6"><h2 class="text-2xl font-bold text-white"><i class="fa-solid fa-upload text-brand-gold mr-2"></i>อัปโหลดแบบที่เสร็จแล้ว</h2></div><div class="bg-brand-charcoal/80 border border-brand-gold/30 rounded-2xl p-6 shadow-xl"><form onsubmit="adminUploadFinishedDesign(event)" class="space-y-6 max-w-2xl mx-auto"><div><label class="block text-brand-gold font-semibold mb-2">เลือกคำสั่งซื้อ</label><select id="admin-select-order" required class="w-full bg-black/50 border border-brand-gold/40 rounded-xl px-4 py-3 text-white"></select></div><div><label class="block text-brand-gold font-semibold mb-2">รูปภาพแบบ</label><input type="file" id="admin-finished-img" accept="image/*" required class="w-full text-sm text-gray-300 file:bg-brand-gold file:text-black bg-black/40 border border-brand-gold/40 rounded-xl p-2"></div><div><label class="block text-brand-gold font-semibold mb-2">หมายเหตุ</label><textarea id="admin-design-notes" rows="3" class="w-full bg-black/50 border border-brand-gold/40 rounded-xl p-3 text-white"></textarea></div><button type="submit" class="w-full gold-btn-gradient text-black font-bold py-3.5 rounded-xl shadow-lg">ส่งแบบให้ลูกค้า</button></form></div></div>
             <div id="admin-page-3" class="admin-page space-y-6 hidden"><div class="border-b border-brand-gold/30 pb-4 mb-6"><h2 class="text-2xl font-bold text-white"><i class="fa-solid fa-calculator text-brand-gold mr-2"></i>การเงิน & ใบงาน</h2></div><div id="admin-finance-list" class="space-y-6"></div></div>
-            <div id="admin-page-4" class="admin-page space-y-6 hidden"><div class="border-b border-brand-gold/30 pb-4 mb-6"><h2 class="text-2xl font-bold text-white"><i class="fa-solid fa-industry text-brand-gold mr-2"></i>ลายผลิต</h2></div><div id="admin-production-list" class="space-y-6"></div></div>
+            <div id="admin-page-4" class="admin-page space-y-6 hidden"><div class="border-b border-brand-gold/30 pb-4 mb-6"><h2 class="text-2xl font-bold text-white"><i class="fa-solid fa-industry text-brand-gold mr-2"></i>ลายผลิต (จัดการสถานะการผลิต)</h2></div><div id="admin-production-list" class="space-y-6"></div></div>
             <div id="admin-page-5" class="admin-page space-y-6 hidden"><div class="border-b border-brand-gold/30 pb-4 mb-6"><h2 class="text-2xl font-bold text-white"><i class="fa-solid fa-chart-line text-brand-gold mr-2"></i>สรุปยอดขาย</h2></div><div id="admin-reports-content" class="space-y-8"></div></div>
             <div id="admin-page-6" class="admin-page space-y-6 hidden"><div class="border-b border-brand-gold/30 pb-4 mb-6"><h2 class="text-2xl font-bold text-white"><i class="fa-solid fa-database text-brand-gold mr-2"></i>ฐานข้อมูล (ประวัติคำสั่งซื้อ)</h2></div><div id="admin-database-list" class="space-y-4"></div></div>
         </div>
@@ -246,8 +246,9 @@
                 payment: item.payment,
                 adminPaymentImage: item.admin_payment_image,
                 productionSchedule: item.production_schedule,
-                productionProgress: item.production_progress || {},
-                customerResponse: item.customer_response || null
+                productionProgress: item.production_progress || { prepare: { done: false, img: null }, dtfPrint: { done: false, img: null }, embBlock: { done: false, img: null }, embroidery: { done: false, img: null }, dtfPress: { done: false, img: null }, shipping: { done: false, img: null } },
+                customerResponse: item.customer_response || null,
+                paymentSlip: item.payment_slip || null
             }));
             return true;
         }
@@ -269,6 +270,7 @@
                     admin_payment_image: order.adminPaymentImage,
                     production_progress: order.productionProgress,
                     customer_response: order.customerResponse,
+                    payment_slip: order.paymentSlip,
                     created_at: order.createdAt
                 };
                 const { error } = await supabaseClient.from('orders').upsert(payload);
@@ -472,7 +474,8 @@
                 createdAt: new Date().toLocaleString('th-TH'), adminFinishedDesign: null,
                 status: 'waiting_admin_design', orderSpecs: null, quotation: null, payment: null, adminPaymentImage: null, 
                 productionProgress: { prepare: { done: false, img: null }, dtfPrint: { done: false, img: null }, embBlock: { done: false, img: null }, embroidery: { done: false, img: null }, dtfPress: { done: false, img: null }, shipping: { done: false, img: null } },
-                customerResponse: null
+                customerResponse: null,
+                paymentSlip: null
             };
             
             await saveOrderToCloud(newOrder);
@@ -532,7 +535,7 @@
                 let responseHTML = '';
                 if (activeOrder.customerResponse) {
                     if (activeOrder.customerResponse.action === 'accept') {
-                        responseHTML = '<div class="p-4 bg-emerald-950/60 border border-emerald-500/50 rounded-xl text-center"><i class="fa-solid fa-circle-check text-emerald-400 text-2xl mb-2"></i><p class="text-white font-bold">คุณได้กด "เอาแบบนี้" เรียบร้อยแล้ว (รอแอดมินตรวจสอบ/สรุปยอด)</p></div>';
+                        responseHTML = '<div class="p-4 bg-emerald-950/60 border border-emerald-500/50 rounded-xl text-center"><i class="fa-solid fa-circle-check text-emerald-400 text-2xl mb-2"></i><p class="text-white font-bold">คุณได้กด "เอาแบบนี้" เรียบร้อยแล้ว (กำลังรอแอดมินคำนวณราคาและออกใบแจ้งชำระเงิน)</p></div>';
                     } else if (activeOrder.customerResponse.action === 'revise') {
                         responseHTML = '<div class="p-4 bg-amber-950/60 border border-amber-500/50 rounded-xl text-center"><i class="fa-solid fa-triangle-exclamation text-amber-400 text-2xl mb-2"></i><p class="text-white font-bold">คุณได้แจ้งแก้ไขแบบแล้ว: <span class="text-gray-300 font-normal">' + activeOrder.customerResponse.note + '</span></p></div>';
                     }
@@ -591,10 +594,27 @@
                 reviewContainer.innerHTML = '<div class="space-y-6"><div class="bg-black/50 border border-brand-gold/30 rounded-2xl p-6"><img src="' + activeOrder.adminFinishedDesign.image + '" class="w-full h-64 object-contain mb-4 rounded-xl border border-brand-gold/40"><span class="px-3 py-1 bg-brand-gold/20 text-brand-gold rounded-full text-xs">แบบเสร็จจากแอดมิน</span><h3 class="text-xl font-bold text-white mt-2">คำสั่งซื้อ #' + activeOrder.id + '</h3><p class="text-sm text-gray-300"><strong>หมายเหตุ:</strong> ' + (activeOrder.adminFinishedDesign.notes || '-') + '</p></div>' + responseHTML + '</div>'; 
             }
             
-            if (!activeOrder.quotation) { paymentContainer.innerHTML = '<div class="text-center py-10 bg-black/40 rounded-2xl border border-dashed border-brand-gold/30"><i class="fa-solid fa-file-invoice-dollar text-4xl text-brand-gold mb-3"></i><p class="text-white font-medium text-lg">รอแอดมินคำนวณราคาและออกใบงาน...</p></div>'; } 
-            else {
+            if (!activeOrder.quotation) { 
+                paymentContainer.innerHTML = '<div class="text-center py-10 bg-black/40 rounded-2xl border border-dashed border-brand-gold/30"><i class="fa-solid fa-file-invoice-dollar text-4xl text-brand-gold mb-3"></i><p class="text-white font-medium text-lg">รอแอดมินคำนวณราคาและออกใบงาน...</p></div>'; 
+            } else {
                 const q = activeOrder.quotation; 
-                paymentContainer.innerHTML = '<div class="space-y-6"><div class="bg-black/50 border border-brand-gold/30 rounded-2xl p-6 space-y-4"><h3 class="text-xl font-bold text-white border-b border-brand-gold/20 pb-3 flex justify-between"><span>สรุปยอดชำระเงิน</span><span class="text-brand-gold text-sm">#' + activeOrder.id + '</span></h3><div class="grid grid-cols-2 gap-4 text-sm"><p class="text-gray-300">ตัวละ: <strong class="text-white">' + q.pricePerPiece + '</strong> บ.</p><p class="text-gray-300">จำนวน: <strong class="text-white">' + q.quantity + '</strong> ตัว</p><p class="text-gray-300">ค่าบล็อก: <strong class="text-white">' + q.blockFee + '</strong> บ.</p><p class="text-gray-300">ค่าส่ง: <strong class="text-white">' + q.shippingFee + '</strong> บ.</p></div><div class="bg-brand-darkRed/30 border border-brand-gold/40 rounded-xl p-4 flex justify-between items-center text-lg font-bold"><span class="text-brand-gold">ราคาเต็ม:</span><span class="text-white">' + q.totalPrice.toLocaleString() + ' บาท</span></div></div></div>';
+                let slipSection = '';
+                if (activeOrder.paymentSlip) {
+                    slipSection = `<div class="p-4 bg-emerald-950/40 border border-emerald-500/50 rounded-xl text-center space-y-2"><p class="text-emerald-400 font-bold"><i class="fa-solid fa-circle-check mr-1"></i> แจ้งชำระเงินเรียบร้อยแล้ว (รอแอดมินตรวจสอบ)</p><img src="${activeOrder.paymentSlip}" class="h-32 object-contain mx-auto rounded border border-emerald-500"></div>`;
+                } else {
+                    slipSection = `
+                    <div class="p-4 bg-black/60 border border-brand-gold/40 rounded-xl space-y-3">
+                        <h4 class="text-brand-gold font-bold text-sm"><i class="fa-solid fa-upload mr-2"></i>อัปโหลดสลิปโอนเงิน / แจ้งชำระเงิน</h4>
+                        <form onsubmit="submitPaymentSlip(event, '${activeOrder.id}')" class="space-y-3">
+                            <div>
+                                <input type="file" id="slipFile_${activeOrder.id}" accept="image/*" required class="w-full text-xs text-gray-300 file:bg-brand-gold file:text-black bg-black/40 border border-brand-gold/30 rounded-lg p-2">
+                            </div>
+                            <button type="submit" class="w-full gold-btn-gradient text-black font-bold py-2.5 rounded-xl text-sm shadow">ส่งแจ้งชำระเงิน</button>
+                        </form>
+                    </div>`;
+                }
+
+                paymentContainer.innerHTML = '<div class="space-y-6"><div class="bg-black/50 border border-brand-gold/30 rounded-2xl p-6 space-y-4"><h3 class="text-xl font-bold text-white border-b border-brand-gold/20 pb-3 flex justify-between"><span>สรุปยอดชำระเงิน</span><span class="text-brand-gold text-sm">#' + activeOrder.id + '</span></h3><div class="grid grid-cols-2 gap-4 text-sm"><p class="text-gray-300">ตัวละ: <strong class="text-white">' + q.pricePerPiece + '</strong> บ.</p><p class="text-gray-300">จำนวน: <strong class="text-white">' + q.quantity + '</strong> ตัว</p><p class="text-gray-300">ค่าบล็อก: <strong class="text-white">' + q.blockFee + '</strong> บ.</p><p class="text-gray-300">ค่าส่ง: <strong class="text-white">' + q.shippingFee + '</strong> บ.</p></div><div class="bg-brand-darkRed/30 border border-brand-gold/40 rounded-xl p-4 flex justify-between items-center text-lg font-bold"><span class="text-brand-gold">ราคาเต็ม:</span><span class="text-white">' + q.totalPrice.toLocaleString() + ' บาท</span></div>' + slipSection + '</div></div>';
                 if (activeOrder.adminPaymentImage) { displayAreaQR.classList.remove('hidden'); document.getElementById('customerViewAdminImage').src = activeOrder.adminPaymentImage; }
             }
 
@@ -636,7 +656,7 @@
                 };
                 order.status = 'customer_accepted';
                 await saveOrderToCloud(order);
-                showToast('บันทึกข้อมูลเรียบร้อย ส่งให้แอดมินออกใบเสนอราคาครับ', 'success');
+                showToast('บันทึกข้อมูลเรียบร้อย รอแอดมินออกใบเสนอราคาครับ', 'success');
                 renderCustomerPages();
             }
         }
@@ -660,12 +680,36 @@
             }
         }
 
+        async function submitPaymentSlip(e, orderId) {
+            e.preventDefault();
+            const fileInput = document.getElementById('slipFile_' + orderId);
+            if (fileInput.files.length > 0) {
+                const base64Slip = await fileToBase64(fileInput.files[0]);
+                const order = appState.orders.find(o => o.id === orderId);
+                if (order) {
+                    order.paymentSlip = base64Slip;
+                    order.status = 'in_production'; // เปลี่ยนสถานะเพื่อย้ายออกจากหน้าข้อมูลลูกค้า (Queue) ไปหน้าลายผลิต
+                    await saveOrderToCloud(order);
+                    showToast('แจ้งชำระเงินสำเร็จ! ออเดอร์เข้าสู่กระบวนการผลิตแล้ว', 'success');
+                    renderCustomerPages();
+                }
+            }
+        }
+
         async function renderAdminPages() {
             await fetchCloudOrders();
+            // กรองออเดอร์ที่ยังไม่ชำระเงินหรือยังไม่ได้แจ้งชำระ (แสดงในหน้า 1: ข้อมูลลูกค้า)
             const activeOrders = appState.orders.filter(o => {
                 if (o.status === 'cancelled') return false;
-                if (appState.currentUser.role === 'admin_agency') return o.agencyId;
-                return true;
+                if (appState.currentUser.role === 'admin_agency') return o.agencyId && (!o.paymentSlip);
+                return !o.paymentSlip;
+            });
+
+            // กรองออเดอร์ที่แจ้งชำระเงินแล้ว (แสดงในหน้า 4: ลายผลิต)
+            const productionOrders = appState.orders.filter(o => {
+                if (o.status === 'cancelled') return false;
+                if (appState.currentUser.role === 'admin_agency') return o.agencyId && o.paymentSlip;
+                return o.paymentSlip;
             });
 
             const queueList = document.getElementById('admin-queue-list');
@@ -723,6 +767,97 @@
                 });
             }
             document.getElementById('admin-finance-list').innerHTML = financeHTML;
+
+            // Render หน้าลายผลิต (Admin Tab 4)
+            let productionHTML = '';
+            if (productionOrders.length === 0) {
+                productionOrders.innerHTML = '<p class="text-center text-gray-400 py-10">ยังไม่มีออเดอร์ในขั้นตอนการผลิต</p>';
+                document.getElementById('admin-production-list').innerHTML = '<p class="text-center text-gray-400 py-10">ยังไม่มีออเดอร์ในขั้นตอนการผลิต (ลูกค้าต้องชำระเงินและแจ้งสลิปก่อน)</p>';
+            } else {
+                productionOrders.forEach(order => {
+                    productionHTML += `
+                    <div class="bg-brand-charcoal border border-brand-gold/30 rounded-2xl p-6 mb-6 space-y-4">
+                        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center border-b border-brand-gold/20 pb-3 gap-2">
+                            <div>
+                                <h3 class="text-white font-bold text-lg">Order #${order.id} - ${order.customerName}</h3>
+                                <p class="text-xs text-gray-400">รุ่น: ${order.model} | สี: ${order.color}</p>
+                            </div>
+                            <div>
+                                <span class="px-3 py-1 bg-emerald-900/50 border border-emerald-500 text-emerald-300 rounded-full text-xs font-semibold">แจ้งชำระเงินแล้ว (สลิปด้านล่าง)</span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-black/50 p-3 rounded-xl border border-brand-gold/20 text-center">
+                                <p class="text-xs text-brand-gold font-bold mb-2">สลิปโอนเงินจากลูกค้า</p>
+                                <img src="${order.paymentSlip}" class="max-h-40 object-contain mx-auto rounded border border-brand-gold">
+                            </div>
+                            <div class="bg-black/50 p-3 rounded-xl border border-brand-gold/20 space-y-2 text-xs">
+                                <p class="text-brand-gold font-bold">ข้อมูลจัดส่ง:</p>
+                                <p class="text-gray-300">${order.customerResponse ? order.customerResponse.shippingAddress : '-'}</p>
+                                <p class="text-brand-gold font-bold mt-2">ไซส์/จำนวน:</p>
+                                <p class="text-gray-300">${order.customerResponse ? order.customerResponse.sizesAndQty : '-'}</p>
+                            </div>
+                        </div>
+                        
+                        <!-- ช่องติ๊กและอัปโหลดรูปตามขั้นตอนผลิต -->
+                        <div class="pt-3 border-t border-brand-gold/20 space-y-3">
+                            <h4 class="text-brand-gold font-bold text-sm"><i class="fa-solid fa-list-check mr-2"></i>อัปเดตสถานะลายผลิต (ติ๊กและแนบรูป)</h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">`;
+                    
+                    PRODUCTION_STAGES.forEach(stage => {
+                        const stageInfo = order.productionProgress[stage.key] || { done: false, img: null };
+                        productionHTML += `
+                        <div class="bg-black/60 p-3 rounded-xl border ${stageInfo.done ? 'border-emerald-500' : 'border-brand-gold/30'} space-y-2">
+                            <div class="flex items-center justify-between">
+                                <label class="flex items-center space-x-2 text-white font-medium text-xs cursor-pointer">
+                                    <input type="checkbox" ${stageInfo.done ? 'checked' : ''} onchange="toggleProductionStage('${order.id}', '${stage.key}', this.checked)" class="w-4 h-4 accent-emerald-500">
+                                    <span>${stage.label}</span>
+                                </label>
+                                <span class="text-[10px] ${stageInfo.done ? 'text-emerald-400 font-bold' : 'text-gray-400'}">${stageInfo.done ? 'เสร็จสิ้น' : 'รอดำเนินการ'}</span>
+                            </div>
+                            <div>
+                                <input type="file" id="prodImg_${order.id}_${stage.key}" accept="image/*" class="w-full text-[10px] text-gray-300 file:bg-brand-gold file:text-black bg-black/40 border border-brand-gold/20 rounded p-1">
+                            </div>
+                            <div class="flex justify-between items-center">
+                                ${stageInfo.img ? `<img src="${stageInfo.img}" class="h-8 w-8 object-cover rounded border border-gray-600">` : '<span class="text-[10px] text-gray-500">ยังไม่มีรูป</span>'}
+                                <button onclick="uploadProductionImage('${order.id}', '${stage.key}')" class="px-2 py-1 bg-brand-darkRed text-brand-gold border border-brand-gold/30 rounded text-[10px] font-semibold hover:bg-red-900">อัปโหลดรูป</button>
+                            </div>
+                        </div>`;
+                    });
+
+                    productionHTML += `</div></div></div>`;
+                });
+                document.getElementById('admin-production-list').innerHTML = productionHTML;
+            }
+        }
+
+        async function toggleProductionStage(orderId, stageKey, isDone) {
+            const order = appState.orders.find(o => o.id === orderId);
+            if (order) {
+                if (!order.productionProgress[stageKey]) order.productionProgress[stageKey] = { done: false, img: null };
+                order.productionProgress[stageKey].done = isDone;
+                await saveOrderToCloud(order);
+                showToast('อัปเดตสถานะเรียบร้อย', 'success');
+                renderAdminPages();
+            }
+        }
+
+        async function uploadProductionImage(orderId, stageKey) {
+            const fileInput = document.getElementById(`prodImg_${orderId}_${stageKey}`);
+            if (fileInput.files.length > 0) {
+                const base64Img = await fileToBase64(fileInput.files[0]);
+                const order = appState.orders.find(o => o.id === orderId);
+                if (order) {
+                    if (!order.productionProgress[stageKey]) order.productionProgress[stageKey] = { done: false, img: null };
+                    order.productionProgress[stageKey].img = base64Img;
+                    order.productionProgress[stageKey].done = true; // อัปโหลดรูปถือว่าทำขั้นตอนนี้เสร็จแล้วด้วยอัตโนมัติ
+                    await saveOrderToCloud(order);
+                    showToast('อัปโหลดรูปความคืบหน้าสำเร็จ', 'success');
+                    renderAdminPages();
+                }
+            } else {
+                showToast('กรุณาเลือกรูปภาพก่อนอัปโหลด', 'error');
+            }
         }
 
         async function cancelOrder(orderId) { 
