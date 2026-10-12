@@ -213,9 +213,15 @@
             { key: 'leftSleeve', label: 'แขนซ้าย' }, { key: 'rightSleeve', label: 'แขนขวา' },
             { key: 'back', label: 'หลัง' }
         ];
+        
+        // ลำดับขั้นตอนการผลิตตามที่ต้องการ: จัดเตรียมเสื้อ -> พิมพ์ DTF -> รีด DTF -> แกะบล็อคปัก -> ลงปัก -> จัดส่ง
         const PRODUCTION_STAGES = [
-            { key: 'prepare', label: 'เตรียมเสื้อ' }, { key: 'dtfPrint', label: 'พิมพ์ DTF' }, { key: 'embBlock', label: 'บล็อคปัก' },
-            { key: 'embroidery', label: 'ลงปัก' }, { key: 'dtfPress', label: 'รีด DTF' }, { key: 'shipping', label: 'จัดส่ง' }
+            { key: 'prepare', label: 'จัดเตรียมเสื้อ' }, 
+            { key: 'dtfPrint', label: 'พิมพ์ DTF' }, 
+            { key: 'dtfPress', label: 'รีด DTF' },
+            { key: 'embBlock', label: 'แกะบล็อคปัก' },
+            { key: 'embroidery', label: 'ลงปัก' }, 
+            { key: 'shipping', label: 'จัดส่ง' }
         ];
 
         async function fetchCloudOrders() {
@@ -246,7 +252,7 @@
                 payment: item.payment,
                 adminPaymentImage: item.admin_payment_image,
                 productionSchedule: item.production_schedule,
-                productionProgress: item.production_progress || { prepare: { done: false, img: null }, dtfPrint: { done: false, img: null }, embBlock: { done: false, img: null }, embroidery: { done: false, img: null }, dtfPress: { done: false, img: null }, shipping: { done: false, img: null } },
+                productionProgress: item.production_progress || { prepare: { done: false, img: null }, dtfPrint: { done: false, img: null }, dtfPress: { done: false, img: null }, embBlock: { done: false, img: null }, embroidery: { done: false, img: null }, shipping: { done: false, img: null } },
                 customerResponse: item.customer_response || null,
                 paymentSlip: item.payment_slip || null,
                 paymentType: item.payment_type || 'deposit'
@@ -383,8 +389,7 @@
                 const icon = appState.currentUser.role === 'agency' ? 'fa-id-badge' : 'fa-line';
                 navAuth.innerHTML = '<div class="flex items-center space-x-3"><span class="text-brand-gold text-sm"><i class="fa-solid ' + icon + ' mr-1"></i>' + appState.currentUser.name + '</span><button onclick="switchRole(\'customer\')" class="bg-brand-darkRed text-brand-gold border border-brand-gold/40 px-3 py-1.5 rounded-lg text-xs">หน้าจัดการ</button><button onclick="logout()" class="text-gray-400 hover:text-red-400 p-2"><i class="fa-solid fa-power-off"></i></button></div>';
                 
-                if (appState.currentUser.role === 'agency' && dbTab) dbTab.classList.remove('hidden');
-                else if (dbTab) dbTab.classList.add('hidden');
+                if (dbTab) dbTab.classList.remove('hidden'); // แสดงหน้า 6 ให้ทั้งลูกค้าและเอเจนซี่
 
                 switchRole('customer');
             } else {
@@ -475,7 +480,7 @@
                 model: appState.selectedModel, color: color, decoration: selectedDecors, positions: positionsData,
                 createdAt: new Date().toLocaleString('th-TH'), adminFinishedDesign: null,
                 status: 'waiting_admin_design', orderSpecs: null, quotation: null, payment: null, adminPaymentImage: null, 
-                productionProgress: { prepare: { done: false, img: null }, dtfPrint: { done: false, img: null }, embBlock: { done: false, img: null }, embroidery: { done: false, img: null }, dtfPress: { done: false, img: null }, shipping: { done: false, img: null } },
+                productionProgress: { prepare: { done: false, img: null }, dtfPrint: { done: false, img: null }, dtfPress: { done: false, img: null }, embBlock: { done: false, img: null }, embroidery: { done: false, img: null }, shipping: { done: false, img: null } },
                 customerResponse: null,
                 paymentSlip: null,
                 paymentType: 'deposit'
@@ -503,15 +508,39 @@
                 });
             }
 
+            // หน้า 6: ฐานข้อมูลการสั่ง (แสดงข้อมูลทั้งหมดรวมถึงสลิป ไซส์ จำนวนเงิน ที่อยู่ และรูปแบบการชำระ)
             if (dbContainer) {
                 if (myOrders.length === 0) {
                     dbContainer.innerHTML = '<p class="text-center text-gray-400 py-8">ยังไม่มีประวัติการสั่งซื้อ</p>';
                 } else {
                     let dbHtml = '';
                     myOrders.forEach(o => {
-                        dbHtml += `<div class="bg-black/50 border border-brand-gold/30 rounded-2xl p-4 shadow flex justify-between items-center mb-3">
-                            <div><h3 class="text-white font-bold">#${o.id}</h3><p class="text-xs text-gray-400 mt-1">รุ่น: ${o.model} | สี: ${o.color}</p></div>
-                            <span class="px-3 py-1 text-xs bg-brand-darkRed text-brand-gold rounded-full border border-brand-gold/40">${o.status}</span>
+                        const payTypeName = o.paymentType === 'full' ? 'ชำระเต็มจำนวน' : 'มัดจำ 50%';
+                        const totalPrice = o.quotation ? o.quotation.totalPrice.toLocaleString() + ' บาท' : '-';
+                        const paidAmount = o.quotation ? (o.paymentType === 'full' ? o.quotation.totalPrice.toLocaleString() : Math.round(o.quotation.totalPrice / 2).toLocaleString()) + ' บาท' : '-';
+                        
+                        dbHtml += `
+                        <div class="bg-black/50 border border-brand-gold/30 rounded-2xl p-6 space-y-4 mb-4">
+                            <div class="flex justify-between items-center border-b border-brand-gold/20 pb-3">
+                                <div>
+                                    <h3 class="text-white font-bold text-lg">#${o.id}</h3>
+                                    <p class="text-xs text-gray-400 mt-1">วันที่สั่ง: ${o.createdAt}</p>
+                                </div>
+                                <span class="px-3 py-1 text-xs bg-brand-darkRed text-brand-gold rounded-full border border-brand-gold/40">${o.status}</span>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                <div class="space-y-1">
+                                    <p class="text-gray-300"><strong>รุ่นเสื้อ:</strong> ${o.model} (${o.color})</p>
+                                    <p class="text-gray-300"><strong>งานตกแต่ง:</strong> ${o.decoration || '-'}</p>
+                                    <p class="text-gray-300"><strong>ไซส์และจำนวน:</strong> ${o.customerResponse ? o.customerResponse.sizesAndQty : '-'}</p>
+                                    <p class="text-gray-300"><strong>ที่อยู่จัดส่ง:</strong> ${o.customerResponse ? o.customerResponse.shippingAddress : '-'}</p>
+                                </div>
+                                <div class="space-y-1 bg-black/40 p-3 rounded-xl border border-brand-gold/20">
+                                    <p class="text-gray-300"><strong>ราคารวมทั้งสิ้น:</strong> <span class="text-brand-gold font-bold">${totalPrice}</span></p>
+                                    <p class="text-gray-300"><strong>รูปแบบการชำระ:</strong> <span class="text-emerald-400 font-bold">${payTypeName} (${paidAmount})</span></p>
+                                    ${o.paymentSlip ? `<div class="mt-2"><p class="text-xs text-brand-gold font-bold mb-1">สลิปการโอนเงิน:</p><img src="${o.paymentSlip}" class="h-20 object-contain rounded border border-brand-gold"></div>` : '<p class="text-xs text-amber-400 mt-2">ยังไม่ได้แจ้งชำระเงิน</p>'}
+                                </div>
+                            </div>
                         </div>`;
                     });
                     dbContainer.innerHTML = dbHtml;
@@ -591,7 +620,7 @@
                                 </div>
                             </form>
                         </div>
-                    </div>`;
+                    `;
                 }
 
                 reviewContainer.innerHTML = '<div class="space-y-6"><div class="bg-black/50 border border-brand-gold/30 rounded-2xl p-6"><img src="' + activeOrder.adminFinishedDesign.image + '" class="w-full h-64 object-contain mb-4 rounded-xl border border-brand-gold/40"><span class="px-3 py-1 bg-brand-gold/20 text-brand-gold rounded-full text-xs">แบบเสร็จจากแอดมิน</span><h3 class="text-xl font-bold text-white mt-2">คำสั่งซื้อ #' + activeOrder.id + '</h3><p class="text-sm text-gray-300"><strong>หมายเหตุ:</strong> ' + (activeOrder.adminFinishedDesign.notes || '-') + '</p></div>' + responseHTML + '</div>'; 
@@ -726,7 +755,7 @@
                 if (order) {
                     order.paymentSlip = base64Slip;
                     order.paymentType = paymentTypeChoice;
-                    order.status = 'in_production'; // ย้ายไปหน้าลายผลิตของแอดมิน
+                    order.status = 'in_production'; // ย้ายไปหน้าลายผลิตของแอดมินทันที
                     await saveOrderToCloud(order);
                     showToast('แจ้งชำระเงินสำเร็จ! ออเดอร์เข้าสู่กระบวนการผลิตแล้ว', 'success');
                     renderCustomerPages();
@@ -804,7 +833,7 @@
             }
             document.getElementById('admin-finance-list').innerHTML = financeHTML;
 
-            // Render หน้าลายผลิต (Admin Tab 4)
+            // Render หน้าลายผลิต (Admin Tab 4) พร้อมขั้นตอนการผลิตใหม่ตามลำดับ
             let productionHTML = '';
             if (productionOrders.length === 0) {
                 document.getElementById('admin-production-list').innerHTML = '<p class="text-center text-gray-400 py-10">ยังไม่มีออเดอร์ในขั้นตอนการผลิต (ลูกค้าต้องชำระเงินและแจ้งสลิปก่อน)</p>';
@@ -835,7 +864,7 @@
                             </div>
                         </div>
                         
-                        <!-- ช่องติ๊กและอัปโหลดรูปตามขั้นตอนผลิต -->
+                        <!-- ช่องติ๊กและอัปโหลดรูปตามขั้นตอนผลิต (จัดเตรียมเสื้อ -> พิมพ์ DTF -> รีด DTF -> แกะบล็อคปัก -> ลงปัก -> จัดส่ง) -->
                         <div class="pt-3 border-t border-brand-gold/20 space-y-3">
                             <h4 class="text-brand-gold font-bold text-sm"><i class="fa-solid fa-list-check mr-2"></i>อัปเดตสถานะลายผลิต (ติ๊กและแนบรูป)</h4>
                             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">`;
