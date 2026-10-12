@@ -1002,10 +1002,10 @@
             salesReportHTML += `</tbody></table></div></div>`;
             document.getElementById('admin-reports-content').innerHTML = salesReportHTML;
 
-            // หน้า 6: ฐานข้อมูลลูกค้าทั้งหมดของแอดมิน (เพิ่มปุ่ม "กดยกเลิกและล้างข้อมูลออเดอร์นี้")
+           // หน้า 6: ฐานข้อมูลลูกค้าทั้งหมดของแอดมิน (แสดงเฉพาะออเดอร์ที่ไม่ถูกยกเลิก)
             const masterDbContainer = document.getElementById('admin-database-list');
             if (masterDbContainer) {
-                const allOrders = appState.orders;
+                const allOrders = appState.orders.filter(o => o.status !== 'cancelled');
                 if (allOrders.length === 0) {
                     masterDbContainer.innerHTML = '<p class="text-center text-gray-400 py-10">ยังไม่มีประวัติคำสั่งซื้อในระบบ</p>';
                 } else {
@@ -1040,7 +1040,7 @@
                                 <div class="space-y-1 bg-black/40 p-3 rounded-xl border border-brand-gold/20">
                                     <p class="text-gray-300"><strong>ราคารวมทั้งสิ้น:</strong> <span class="text-brand-gold font-bold">${totalPrice}</span></p>
                                     <p class="text-gray-300"><strong>รูปแบบการชำระ:</strong> <span class="text-emerald-400 font-bold">${payTypeName} (${paidAmount})</span></p>
-                                    ${o.paymentSlip ? `<div class="mt-2"><p class="text-xs text-brand-gold font-bold mb-1">สลิปโอนเงิน:</p><img src="${o.paymentSlip}" class="h-16 object-contain rounded border border-emerald-500"></div>` : '<p class="text-xs text-amber-400 mt-2">ยังไม่แจ้งชำระเงิน</p>'}
+                                    ${o.paymentSlip ? `<div class="mt-2"><p class="text-xs text-brand-gold font-bold mb-1">สลิปการโอนเงิน:</p><img src="${o.paymentSlip}" class="h-16 object-contain rounded border border-emerald-500"></div>` : '<p class="text-xs text-amber-400 mt-2">ยังไม่แจ้งชำระเงิน</p>'}
                                 </div>
                                 <div class="bg-black/40 p-3 rounded-xl border border-brand-gold/20 text-center">
                                     <p class="text-xs text-brand-gold font-bold mb-2"><i class="fa-solid fa-eye mr-1"></i> แบบที่ตกลง (หน้า 3)</p>
@@ -1052,11 +1052,27 @@
                     masterDbContainer.innerHTML = masterHtml;
                 }
             }
+        async function confirmAndDeleteOrder(orderId) {
+            if (confirm(`คุณต้องการยกเลิกและล้างข้อมูลออเดอร์ #${orderId} ออกจากระบบใช่หรือไม่?`)) {
+                await deleteOrderFromCloud(orderId);
+            }
         }
 
-        async function confirmAndDeleteOrder(orderId) {
-            if (confirm(`คุณต้องการยกเลิกและล้างข้อมูลออเดอร์ #${orderId} ออกจากระบบอย่างถาวรใช่หรือไม่?`)) {
-                await deleteOrderFromCloud(orderId);
+        async function deleteOrderFromCloud(orderId) {
+            try {
+                const order = appState.orders.find(o => o.id === orderId);
+                if (order) {
+                    order.status = 'cancelled';
+                    await saveOrderToCloud(order);
+                    showToast('ล้างข้อมูลออเดอร์เรียบร้อยแล้ว!', 'success');
+                    await fetchCloudOrders();
+                    renderAdminPages();
+                    return true;
+                }
+            } catch (err) {
+                console.error('ล้างข้อมูลล้มเหลว', err);
+                showToast('ล้างข้อมูลไม่สำเร็จ: ' + err.message, 'error');
+                return false;
             }
         }
 
