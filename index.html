@@ -522,6 +522,7 @@
                         const payTypeName = o.paymentType === 'full' ? 'ชำระเต็มจำนวน' : 'มัดจำ 50%';
                         const totalPrice = o.quotation ? o.quotation.totalPrice.toLocaleString() + ' บาท' : '-';
                         const paidAmount = o.quotation ? (o.paymentType === 'full' ? o.quotation.totalPrice.toLocaleString() : Math.round(o.quotation.totalPrice / 2).toLocaleString()) + ' บาท' : '-';
+                        const agreedDesignImg = o.adminFinishedDesign && o.adminFinishedDesign.image ? o.adminFinishedDesign.image : null;
                         
                         dbHtml += `
                         <div class="bg-black/50 border border-brand-gold/30 rounded-2xl p-6 space-y-4 mb-4">
@@ -532,7 +533,7 @@
                                 </div>
                                 <span class="px-3 py-1 text-xs bg-brand-darkRed text-brand-gold rounded-full border border-brand-gold/40">${o.status}</span>
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                                 <div class="space-y-1">
                                     <p class="text-gray-300"><strong>รุ่นเสื้อ:</strong> ${o.model} (${o.color})</p>
                                     <p class="text-gray-300"><strong>งานตกแต่ง:</strong> ${o.decoration || '-'}</p>
@@ -543,6 +544,10 @@
                                     <p class="text-gray-300"><strong>ราคารวมทั้งสิ้น:</strong> <span class="text-brand-gold font-bold">${totalPrice}</span></p>
                                     <p class="text-gray-300"><strong>รูปแบบการชำระ:</strong> <span class="text-emerald-400 font-bold">${payTypeName} (${paidAmount})</span></p>
                                     ${o.paymentSlip ? `<div class="mt-2"><p class="text-xs text-brand-gold font-bold mb-1">สลิปการโอนเงิน:</p><img src="${o.paymentSlip}" class="h-20 object-contain rounded border border-brand-gold"></div>` : '<p class="text-xs text-amber-400 mt-2">ยังไม่ได้แจ้งชำระเงิน</p>'}
+                                </div>
+                                <div class="bg-black/40 p-3 rounded-xl border border-brand-gold/20 text-center">
+                                    <p class="text-xs text-brand-gold font-bold mb-2"><i class="fa-solid fa-eye mr-1"></i> แบบที่ตกลง (หน้า 3)</p>
+                                    ${agreedDesignImg ? `<img src="${agreedDesignImg}" class="max-h-28 object-contain mx-auto rounded border border-brand-gold">` : '<p class="text-xs text-gray-500">ยังไม่มีแบบที่ตกลง</p>'}
                                 </div>
                             </div>
                         </div>`;
@@ -837,7 +842,7 @@
             }
             document.getElementById('admin-finance-list').innerHTML = financeHTML;
 
-            // หน้า 4: ลายผลิต (เพิ่มการแสดงรูปแบบที่ลูกค้าตกลงในหน้าที่ 3 คู่กับสลิปและข้อมูลลูกค้า)
+            // หน้า 4: ลายผลิต
             let productionHTML = '';
             if (productionOrders.length === 0) {
                 document.getElementById('admin-production-list').innerHTML = '<p class="text-center text-gray-400 py-10">ยังไม่มีออเดอร์ในขั้นตอนการผลิต (ลูกค้าต้องชำระเงินและแจ้งสลิปก่อน)</p>';
@@ -859,17 +864,14 @@
                         </div>
                         
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <!-- รูปแบบที่ลูกค้าตกลงจากหน้า 3 -->
                             <div class="bg-black/50 p-3 rounded-xl border border-brand-gold/20 text-center">
                                 <p class="text-xs text-brand-gold font-bold mb-2"><i class="fa-solid fa-eye mr-1"></i> รูปแบบที่ตกลง (หน้า 3)</p>
                                 ${agreedDesignImg ? `<img src="${agreedDesignImg}" class="max-h-40 object-contain mx-auto rounded border border-brand-gold">` : '<p class="text-xs text-gray-500">ไม่มีรูปภาพแบบ</p>'}
                             </div>
-                            <!-- สลิปโอนเงิน -->
                             <div class="bg-black/50 p-3 rounded-xl border border-brand-gold/20 text-center">
                                 <p class="text-xs text-brand-gold font-bold mb-2"><i class="fa-solid fa-receipt mr-1"></i> สลิปโอนเงิน (${payTypeName})</p>
                                 <img src="${order.paymentSlip}" class="max-h-40 object-contain mx-auto rounded border border-emerald-500">
                             </div>
-                            <!-- ข้อมูลจัดส่ง & ไซส์ -->
                             <div class="bg-black/50 p-3 rounded-xl border border-brand-gold/20 space-y-2 text-xs">
                                 <p class="text-brand-gold font-bold"><i class="fa-solid fa-address-card mr-1"></i> ข้อมูลลูกค้า & จัดส่ง:</p>
                                 <p class="text-gray-300"><strong>ที่อยู่:</strong> ${order.customerResponse ? order.customerResponse.shippingAddress : '-'}</p>
@@ -877,7 +879,6 @@
                             </div>
                         </div>
                         
-                        <!-- ช่องติ๊กและอัปโหลดรูปตามขั้นตอนผลิต -->
                         <div class="pt-3 border-t border-brand-gold/20 space-y-3">
                             <h4 class="text-brand-gold font-bold text-sm"><i class="fa-solid fa-list-check mr-2"></i>อัปเดตสถานะลายผลิต (ติ๊กและแนบรูป)</h4>
                             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">`;
@@ -908,7 +909,7 @@
                 document.getElementById('admin-production-list').innerHTML = productionHTML;
             }
 
-            // หน้า 5: ระบบยอดขาย (Admin Tab 5)
+            // หน้า 5: ระบบยอดขาย
             const allValidOrders = appState.orders.filter(o => o.status !== 'cancelled' && o.quotation);
             let totalRevenue = 0;
             let fullPaymentRevenue = 0;
@@ -983,7 +984,7 @@
             salesReportHTML += `</tbody></table></div></div>`;
             document.getElementById('admin-reports-content').innerHTML = salesReportHTML;
 
-            // หน้า 6: ฐานข้อมูลลูกค้าทั้งหมดของแอดมิน (Admin Master Database)
+            // หน้า 6: ฐานข้อมูลลูกค้าทั้งหมดของแอดมิน (Admin Master Database - แสดงแบบที่ลูกค้าตกลงด้วย)
             const masterDbContainer = document.getElementById('admin-database-list');
             if (masterDbContainer) {
                 const allOrders = appState.orders.filter(o => o.status !== 'cancelled');
@@ -995,6 +996,7 @@
                         const payTypeName = o.paymentType === 'full' ? 'ชำระเต็มจำนวน' : 'มัดจำ 50%';
                         const totalPrice = o.quotation ? o.quotation.totalPrice.toLocaleString() + ' บาท' : '-';
                         const paidAmount = o.quotation ? (o.paymentType === 'full' ? o.quotation.totalPrice.toLocaleString() : Math.round(o.quotation.totalPrice / 2).toLocaleString()) + ' บาท' : '-';
+                        const agreedDesignImg = o.adminFinishedDesign && o.adminFinishedDesign.image ? o.adminFinishedDesign.image : null;
 
                         masterHtml += `
                         <div class="bg-brand-charcoal border border-brand-gold/30 rounded-2xl p-6 shadow-xl space-y-4 mb-4">
@@ -1015,9 +1017,11 @@
                                 <div class="space-y-1 bg-black/40 p-3 rounded-xl border border-brand-gold/20">
                                     <p class="text-gray-300"><strong>ราคารวมทั้งสิ้น:</strong> <span class="text-brand-gold font-bold">${totalPrice}</span></p>
                                     <p class="text-gray-300"><strong>รูปแบบการชำระ:</strong> <span class="text-emerald-400 font-bold">${payTypeName} (${paidAmount})</span></p>
+                                    ${o.paymentSlip ? `<div class="mt-2"><p class="text-xs text-brand-gold font-bold mb-1">สลิปโอนเงิน:</p><img src="${o.paymentSlip}" class="h-16 object-contain rounded border border-emerald-500"></div>` : '<p class="text-xs text-amber-400 mt-2">ยังไม่แจ้งชำระเงิน</p>'}
                                 </div>
-                                <div class="flex items-center justify-center bg-black/40 p-3 rounded-xl border border-brand-gold/20">
-                                    ${o.paymentSlip ? `<div class="text-center"><p class="text-xs text-brand-gold font-bold mb-1">สลิปโอนเงิน:</p><img src="${o.paymentSlip}" class="h-24 object-contain rounded border border-emerald-500 mx-auto"></div>` : '<p class="text-xs text-amber-400">ยังไม่แจ้งชำระเงิน</p>'}
+                                <div class="bg-black/40 p-3 rounded-xl border border-brand-gold/20 text-center">
+                                    <p class="text-xs text-brand-gold font-bold mb-2"><i class="fa-solid fa-eye mr-1"></i> แบบที่ตกลง (หน้า 3)</p>
+                                    ${agreedDesignImg ? `<img src="${agreedDesignImg}" class="max-h-28 object-contain mx-auto rounded border border-brand-gold">` : '<p class="text-xs text-gray-500">ยังไม่มีแบบที่ตกลง</p>'}
                                 </div>
                             </div>
                         </div>`;
